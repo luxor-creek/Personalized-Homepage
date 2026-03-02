@@ -108,7 +108,7 @@ const Auth = () => {
         setUser(session?.user ?? null);
         setCheckingAuth(false);
         if (session?.user) {
-          navigate("/admin");
+          navigate("/workspace");
         }
       }
     );
@@ -118,7 +118,7 @@ const Auth = () => {
       setUser(session?.user ?? null);
       setCheckingAuth(false);
       if (session?.user) {
-        navigate("/admin");
+        navigate("/workspace");
       }
     });
 

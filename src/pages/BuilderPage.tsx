@@ -63,7 +63,7 @@ const BuilderPage = () => {
         setSections(Array.isArray(data.sections) ? (data.sections as unknown as BuilderSection[]) : []);
       } catch (err: any) {
         toast({ title: "Error loading template", description: err.message, variant: "destructive" });
-        navigate("/admin");
+        navigate("/workspace");
       } finally {
         setLoading(false);
       }
@@ -229,7 +229,7 @@ const BuilderPage = () => {
       {/* Top toolbar */}
       <header className="h-14 border-b border-border bg-card flex items-center justify-between px-2 sm:px-4 shrink-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin")} className="shrink-0">
+          <Button variant="ghost" size="sm" onClick={() => navigate("/workspace")} className="shrink-0">
             <ArrowLeft className="w-4 h-4 sm:mr-1" />
             <span className="hidden sm:inline">Back</span>
           </Button>

@@ -608,7 +608,7 @@ const AdminDashboard = () => {
             <Badge variant="outline" className="text-xs"><Shield className="w-3 h-3 mr-1" />Admin</Badge>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+            <Button variant="outline" size="sm" onClick={() => navigate("/workspace")}>
               <Layout className="w-4 h-4 mr-2" />
               User Dashboard
             </Button>

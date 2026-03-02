@@ -128,10 +128,10 @@ const TemplateEditor = () => {
   const handleCancel = () => {
     if (hasChanges) {
       if (confirm("You have unsaved changes. Are you sure you want to leave?")) {
-        navigate("/admin");
+        navigate("/workspace");
       }
     } else {
-      navigate("/admin");
+      navigate("/workspace");
     }
   };
 
@@ -176,7 +176,7 @@ const TemplateEditor = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-foreground mb-2">Template Not Found</h1>
           <p className="text-muted-foreground mb-4">{error || "The requested template does not exist."}</p>
-          <Button onClick={() => navigate("/admin")}>Back to Admin</Button>
+          <Button onClick={() => navigate("/workspace")}>Back to Workspace</Button>
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -33,7 +33,8 @@ const App = () => (
           <Route path="/" element={<Homepage />} />
           <Route path="/police-recruitment" element={<Index />} />
           <Route path="/wine-video-landing" element={<WineVideoTemplate />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/workspace" element={<Admin />} />
+          <Route path="/admin" element={<Navigate to="/workspace" replace />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/pricing" element={<Pricing />} />

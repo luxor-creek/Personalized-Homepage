@@ -134,7 +134,7 @@ const Pricing = () => {
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <BrandLogo className="h-8" />
-          <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
+          <Button variant="ghost" size="sm" onClick={() => navigate("/workspace")}>
             <ArrowLeft className="w-4 h-4 mr-2" />Back to Dashboard
           </Button>
         </div>
