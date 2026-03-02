@@ -2832,7 +2832,7 @@ const Admin = () => {
                     <div>
                       <p className="font-medium text-foreground">Mailchimp</p>
                       <p className="text-sm text-muted-foreground">
-                        {mailchimpConnected ? "Connected — API key saved" : "Not connected"}
+                        {mailchimpConnected ? "Connected" : "Not connected"}
                       </p>
                     </div>
                   </div>
@@ -2851,36 +2851,6 @@ const Admin = () => {
                 onOpenChange={setSnovOnboardingOpen}
                 onConnected={() => checkSnovConnection()}
               />
-
-              <MailchimpOnboardingDialog
-                open={mailchimpOnboardingOpen}
-                onOpenChange={setMailchimpOnboardingOpen}
-                onConnected={() => checkMailchimpConnection()}
-              />
-
-              {/* Mailchimp */}
-              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-yellow-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Mailchimp</p>
-                      <p className="text-sm text-muted-foreground">
-                        {mailchimpConnected ? "Connected — API key saved" : "Not connected"}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant={mailchimpConnected ? "outline" : "default"}
-                    size="sm"
-                    onClick={() => setMailchimpOnboardingOpen(true)}
-                  >
-                    {mailchimpConnected ? "Edit Connection" : "Connect"}
-                  </Button>
-                </div>
-              </div>
 
               <MailchimpOnboardingDialog
                 open={mailchimpOnboardingOpen}
