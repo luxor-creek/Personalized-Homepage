@@ -200,6 +200,7 @@ const Admin = () => {
   const [loadingMailchimpLists, setLoadingMailchimpLists] = useState(false);
   const [selectedMailchimpList, setSelectedMailchimpList] = useState<string | null>(null);
   const [sendingMailchimp, setSendingMailchimp] = useState(false);
+  const [mailchimpResult, setMailchimpResult] = useState<{ added: number; mergeTag: string } | null>(null);
   const [snovEmailConfig, setSnovEmailConfig] = useState({
     subject: "{{first_name}}, check out your personalized video",
     body: "Hi {{first_name}},\n\nI created a personalized video just for you. Check it out here:\n\n{{country}}\n\nLet me know what you think!\n\nBest regards",
@@ -1262,6 +1263,7 @@ const Admin = () => {
   const openMailchimpDialog = async () => {
     setMailchimpDialogOpen(true);
     setSelectedMailchimpList(null);
+    setMailchimpResult(null);
     setLoadingMailchimpLists(true);
     try {
       const session = (await supabase.auth.getSession()).data.session;
@@ -1314,12 +1316,8 @@ const Admin = () => {
       );
       const data = await res.json();
       if (data.success) {
-        toast({
-          title: "Success!",
-          description: `Enriched ${data.added} contacts. Use *|PPAGE|* in your Mailchimp email template for the personalized link.`,
-        });
-        setMailchimpDialogOpen(false);
-        setAddContactsSheetOpen(false);
+        setMailchimpResult({ added: data.added, mergeTag: data.mergeTag || "*|PPAGE|*" });
+        setSendingMailchimp(false);
         fetchPages(selectedCampaign.id);
         fetchCampaigns();
         usageLimits.refetchLimits();
@@ -2085,13 +2083,63 @@ const Admin = () => {
                                   </DialogTrigger>
                                   <DialogContent className="max-w-lg">
                                     <DialogHeader>
-                                      <DialogTitle>Import from Mailchimp</DialogTitle>
-                                      <DialogDescription>
-                                        Select a Mailchimp audience. We'll create personalized pages and write the link back as a merge field.
-                                      </DialogDescription>
+                                      <DialogTitle>{mailchimpResult ? "Contacts Ready!" : "Import from Mailchimp"}</DialogTitle>
+                                      {!mailchimpResult && (
+                                        <DialogDescription>
+                                          Select a Mailchimp audience. We'll create personalized pages and write the link back as a merge field.
+                                        </DialogDescription>
+                                      )}
                                     </DialogHeader>
                                     <div className="space-y-4 pt-4">
-                                      {loadingMailchimpLists ? (
+                                      {mailchimpResult ? (
+                                        <>
+                                          <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
+                                            <div className="flex items-center gap-2">
+                                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                              <span className="font-semibold text-green-800">
+                                                {mailchimpResult.added} contact{mailchimpResult.added !== 1 ? "s" : ""} enriched with personalized links
+                                              </span>
+                                            </div>
+                                            <p className="text-sm text-green-700">
+                                              Each contact in your Mailchimp audience now has a unique personalized page URL stored in the <code className="bg-green-100 px-1 rounded font-mono text-xs">{mailchimpResult.mergeTag}</code> merge field.
+                                            </p>
+                                          </div>
+
+                                          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                            <p className="font-semibold text-sm text-foreground">Next steps in Mailchimp:</p>
+                                            <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                                              <li>Go to Mailchimp and <strong className="text-foreground">create an email campaign</strong> targeting this audience</li>
+                                              <li>In your email template, add a button or link and set the URL to <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code></li>
+                                              <li>Each recipient will get their own unique personalized page link</li>
+                                              <li>Hit <strong className="text-foreground">Send</strong> in Mailchimp — that's it!</li>
+                                            </ol>
+                                          </div>
+
+                                          <div className="flex gap-2">
+                                            <a
+                                              href="https://login.mailchimp.com"
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              className="flex-1"
+                                            >
+                                              <Button className="w-full gap-2">
+                                                <ExternalLink className="w-4 h-4" />
+                                                Open Mailchimp
+                                              </Button>
+                                            </a>
+                                            <Button
+                                              variant="outline"
+                                              onClick={() => {
+                                                setMailchimpDialogOpen(false);
+                                                setAddContactsSheetOpen(false);
+                                                setMailchimpResult(null);
+                                              }}
+                                            >
+                                              Done
+                                            </Button>
+                                          </div>
+                                        </>
+                                      ) : loadingMailchimpLists ? (
                                         <div className="flex items-center justify-center py-4">
                                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                                         </div>
@@ -2141,6 +2189,7 @@ const Admin = () => {
                                           </>
                                         )}
                                       </Button>
+                                      )}
                                     </div>
                                   </DialogContent>
                                 </Dialog>
@@ -2171,13 +2220,51 @@ const Admin = () => {
                                   </DialogTrigger>
                                   <DialogContent className="max-w-lg">
                                     <DialogHeader>
-                                      <DialogTitle>Import from Mailchimp</DialogTitle>
-                                      <DialogDescription>
-                                        Select an audience to import contacts and enrich with personalized links.
-                                      </DialogDescription>
+                                      <DialogTitle>{mailchimpResult ? "Contacts Ready!" : "Import from Mailchimp"}</DialogTitle>
+                                      {!mailchimpResult && (
+                                        <DialogDescription>
+                                          Select an audience to import contacts and enrich with personalized links.
+                                        </DialogDescription>
+                                      )}
                                     </DialogHeader>
                                     <div className="space-y-4 pt-4">
-                                      {loadingMailchimpLists ? (
+                                      {mailchimpResult ? (
+                                        <>
+                                          <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
+                                            <div className="flex items-center gap-2">
+                                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+                                              <span className="font-semibold text-green-800">
+                                                {mailchimpResult.added} contact{mailchimpResult.added !== 1 ? "s" : ""} enriched with personalized links
+                                              </span>
+                                            </div>
+                                            <p className="text-sm text-green-700">
+                                              Each contact now has a unique URL in the <code className="bg-green-100 px-1 rounded font-mono text-xs">{mailchimpResult.mergeTag}</code> merge field.
+                                            </p>
+                                          </div>
+
+                                          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                                            <p className="font-semibold text-sm text-foreground">Next steps in Mailchimp:</p>
+                                            <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
+                                              <li>Go to Mailchimp and <strong className="text-foreground">create an email campaign</strong> targeting this audience</li>
+                                              <li>In your email template, add a button or link and set the URL to <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code></li>
+                                              <li>Each recipient will get their own unique personalized page link</li>
+                                              <li>Hit <strong className="text-foreground">Send</strong> in Mailchimp — that's it!</li>
+                                            </ol>
+                                          </div>
+
+                                          <div className="flex gap-2">
+                                            <a href="https://login.mailchimp.com" target="_blank" rel="noopener noreferrer" className="flex-1">
+                                              <Button className="w-full gap-2">
+                                                <ExternalLink className="w-4 h-4" />
+                                                Open Mailchimp
+                                              </Button>
+                                            </a>
+                                            <Button variant="outline" onClick={() => { setMailchimpDialogOpen(false); setAddContactsSheetOpen(false); setMailchimpResult(null); }}>
+                                              Done
+                                            </Button>
+                                          </div>
+                                        </>
+                                      ) : loadingMailchimpLists ? (
                                         <div className="flex items-center justify-center py-4">
                                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                                         </div>
@@ -2230,6 +2317,7 @@ const Admin = () => {
                                           </>
                                         )}
                                       </Button>
+                                      )}
                                     </div>
                                   </DialogContent>
                                 </Dialog>
