@@ -2147,6 +2147,95 @@ const Admin = () => {
                                   </Button>
                                 )}
 
+                                {/* Mailchimp */}
+                                {mailchimpConnected ? (
+                                <Dialog open={mailchimpDialogOpen} onOpenChange={setMailchimpDialogOpen}>
+                                  <DialogTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start" onClick={openMailchimpDialog}>
+                                      <Mail className="w-4 h-4 mr-2" />
+                                      Import from Mailchimp
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-lg">
+                                    <DialogHeader>
+                                      <DialogTitle>Import from Mailchimp</DialogTitle>
+                                      <DialogDescription>
+                                        Select an audience to import contacts and enrich with personalized links.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4 pt-4">
+                                      {loadingMailchimpLists ? (
+                                        <div className="flex items-center justify-center py-4">
+                                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                                        </div>
+                                      ) : mailchimpLists.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground">No audiences found. Create an audience in Mailchimp first.</p>
+                                      ) : (
+                                        <div className="space-y-2">
+                                          <Label>Select Audience</Label>
+                                          <div className="grid gap-2 max-h-48 overflow-y-auto">
+                                            {mailchimpLists.map((list) => (
+                                              <div
+                                                key={list.id}
+                                                onClick={() => setSelectedMailchimpList(list.id)}
+                                                className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                                                  selectedMailchimpList === list.id
+                                                    ? "border-primary bg-primary/10"
+                                                    : "border-border hover:border-primary/50"
+                                                }`}
+                                              >
+                                                <div className="flex justify-between items-center">
+                                                  <span className="font-medium">{list.name}</span>
+                                                  <span className="text-sm text-muted-foreground">{list.memberCount} contacts</span>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      <div className="bg-muted/50 rounded-lg p-3">
+                                        <p className="text-xs text-muted-foreground">
+                                          We'll create a personalized page for each contact and write the URL back to a <code className="bg-muted px-1 py-0.5 rounded font-mono">*|PPAGE|*</code> merge field on each contact. Use this merge tag in your Mailchimp email template.
+                                        </p>
+                                      </div>
+
+                                      <Button 
+                                        onClick={sendMailchimpCampaign} 
+                                        className="w-full" 
+                                        disabled={!selectedMailchimpList || sendingMailchimp}
+                                      >
+                                        {sendingMailchimp ? (
+                                          <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                                            Enriching contacts...
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Mail className="w-4 h-4 mr-2" />
+                                            Import & Enrich
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                      setAddContactsSheetOpen(false);
+                                      setActiveTab("settings");
+                                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                  >
+                                    <Mail className="w-4 h-4 mr-2" />
+                                    Connect Mailchimp
+                                    <span className="ml-auto text-xs text-muted-foreground">Set up in Settings</span>
+                                  </Button>
+                                )}
+
                                 <LinkedInEnrichDialog
                                   campaignId={selectedCampaign.id}
                                   templateId={selectedCampaign.template_id}
@@ -2633,10 +2722,39 @@ const Admin = () => {
                 </div>
               </div>
 
+              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Mailchimp</p>
+                      <p className="text-sm text-muted-foreground">
+                        {mailchimpConnected ? "Connected — API key saved" : "Not connected"}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant={mailchimpConnected ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => setMailchimpOnboardingOpen(true)}
+                  >
+                    {mailchimpConnected ? "Edit Connection" : "Connect"}
+                  </Button>
+                </div>
+              </div>
+
               <SnovOnboardingDialog
                 open={snovOnboardingOpen}
                 onOpenChange={setSnovOnboardingOpen}
                 onConnected={() => checkSnovConnection()}
+              />
+
+              <MailchimpOnboardingDialog
+                open={mailchimpOnboardingOpen}
+                onOpenChange={setMailchimpOnboardingOpen}
+                onConnected={() => checkMailchimpConnection()}
               />
 
               {/* Mailchimp */}
