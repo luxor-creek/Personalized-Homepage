@@ -262,6 +262,19 @@ const Admin = () => {
   const [_pagesReadyDismissed] = useState<Set<string>>(new Set()); // kept for type compat
   const [activeTab, setActiveTab] = useState(new URLSearchParams(window.location.search).get("tab") || "landing-pages");
 
+  // Detect return from Mailchimp OAuth callback
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("mailchimp") === "connected") {
+      checkMailchimpConnection();
+      toast({ title: "Mailchimp connected!", description: "Your Mailchimp account is now linked. You can import audiences from the Add Contacts menu." });
+      // Clean up URL
+      params.delete("mailchimp");
+      const newUrl = params.toString() ? `${window.location.pathname}?${params}` : window.location.pathname;
+      window.history.replaceState({}, "", newUrl);
+    }
+  }, []);
+
   // Check authentication and admin role
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
