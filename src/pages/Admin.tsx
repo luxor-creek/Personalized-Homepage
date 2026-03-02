@@ -2189,7 +2189,6 @@ const Admin = () => {
                                           </>
                                         )}
                                       </Button>
-                                      )}
                                     </div>
                                   </DialogContent>
                                 </Dialog>
@@ -2317,7 +2316,6 @@ const Admin = () => {
                                           </>
                                         )}
                                       </Button>
-                                      )}
                                     </div>
                                   </DialogContent>
                                 </Dialog>
