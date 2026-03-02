@@ -258,6 +258,8 @@ const Admin = () => {
   const [upgradeDialogOpen, setUpgradeDialogOpen] = useState(false);
   const [upgradeResourceType, setUpgradeResourceType] = useState<"page" | "campaign">("campaign");
   const [manageSubOpen, setManageSubOpen] = useState(false);
+  const [apiKeys, setApiKeys] = useState<any[]>([]);
+  const [newApiKey, setNewApiKey] = useState<string | null>(null);
 
   // Email alert toggle
   const [alertConfirmDialogOpen, setAlertConfirmDialogOpen] = useState(false);
@@ -340,6 +342,7 @@ const Admin = () => {
     if (user) {
       fetchCampaigns();
       fetchTemplates();
+      fetchApiKeys();
       fetchCustomDomain();
       checkSnovConnection();
       checkMailchimpConnection();
@@ -445,6 +448,11 @@ const Admin = () => {
     } catch (error: any) {
       console.error("Error fetching info requests:", error.message);
     }
+  };
+
+  const fetchApiKeys = async () => {
+    const { data } = await supabase.from('api_keys').select('*').eq('revoked', false).order('created_at', { ascending: false });
+    setApiKeys(data || []);
   };
 
   const fetchTemplates = async () => {
@@ -2901,6 +2909,59 @@ const Admin = () => {
                 onOpenChange={setMailchimpOnboardingOpen}
                 onConnected={() => checkMailchimpConnection()}
               />
+
+              {/* API Keys & Zapier Integration */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2"><Braces className="w-4 h-4" /> API & Zapier</h3>
+                    <p className="text-xs text-slate-500 mt-1">Connect your account to Zapier and other platforms via API keys.</p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={async () => {
+                    const key = 'pk_' + crypto.randomUUID().replace(/-/g, '');
+                    const encoder = new TextEncoder();
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(key));
+                    const keyHash = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+                    const { error } = await supabase.from('api_keys').insert({ user_id: user?.id, name: 'API Key', key_hash: keyHash, key_prefix: key.slice(0, 10) });
+                    if (error) { toast({ title: 'Error', description: error.message, variant: 'destructive' }); return; }
+                    setNewApiKey(key);
+                    toast({ title: 'API Key Created', description: 'Copy it now — it won\'t be shown again.' });
+                    fetchApiKeys();
+                  }}>
+                    <Plus className="w-3.5 h-3.5 mr-1.5" /> Create API Key
+                  </Button>
+                </div>
+                {newApiKey && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                    <p className="text-xs font-medium text-green-800 mb-1">New API Key (copy now — shown only once):</p>
+                    <div className="flex gap-2">
+                      <code className="flex-1 text-xs bg-white border rounded px-2 py-1.5 font-mono text-green-900 break-all">{newApiKey}</code>
+                      <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(newApiKey); toast({ title: 'Copied!' }); }}><Copy className="w-3 h-3" /></Button>
+                    </div>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  {apiKeys.map((k) => (
+                    <div key={k.id} className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-lg">
+                      <div>
+                        <code className="text-xs font-mono text-slate-600">{k.key_prefix}••••••••</code>
+                        <span className="text-xs text-slate-400 ml-2">Created {new Date(k.created_at).toLocaleDateString()}</span>
+                        {k.last_used_at && <span className="text-xs text-slate-400 ml-2">· Last used {new Date(k.last_used_at).toLocaleDateString()}</span>}
+                      </div>
+                      <Button size="sm" variant="ghost" className="text-red-500 hover:text-red-700 h-7" onClick={async () => {
+                        await supabase.from('api_keys').update({ revoked: true }).eq('id', k.id);
+                        toast({ title: 'Key revoked' });
+                        fetchApiKeys();
+                      }}><Trash2 className="w-3 h-3" /></Button>
+                    </div>
+                  ))}
+                  {apiKeys.length === 0 && <p className="text-xs text-slate-400 text-center py-3">No API keys yet. Create one to connect Zapier or other integrations.</p>}
+                </div>
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <p className="text-xs text-slate-500 mb-2">API Base URL: <code className="bg-slate-50 px-1.5 py-0.5 rounded text-slate-700">https://sfcnpefuwklmrcqbguwj.supabase.co/functions/v1/zapier-api</code></p>
+                  <p className="text-xs text-slate-500">Include your API key as <code className="bg-slate-50 px-1.5 py-0.5 rounded text-slate-700">x-api-key</code> header, or use OAuth via Zapier.</p>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
