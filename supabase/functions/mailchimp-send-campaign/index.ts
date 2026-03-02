@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { crypto as stdCrypto } from "https://deno.land/std@0.190.0/crypto/mod.ts";
 import { getMailchimpCredentials, mailchimpFetch } from "../_shared/get-mailchimp-credentials.ts";
 
 const corsHeaders = {
@@ -219,7 +220,7 @@ const handler = async (req: Request): Promise<Response> => {
         // MD5 hash of lowercase email = subscriber hash for Mailchimp API
         const encoder = new TextEncoder();
         const data = encoder.encode(email.toLowerCase());
-        const hashBuffer = await crypto.subtle.digest("MD5", data);
+        const hashBuffer = await stdCrypto.subtle.digest("MD5", data);
         const subscriberHash = Array.from(new Uint8Array(hashBuffer))
           .map(b => b.toString(16).padStart(2, "0"))
           .join("");
