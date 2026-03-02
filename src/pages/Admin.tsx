@@ -249,6 +249,9 @@ const Admin = () => {
   // Delete campaign confirmation
   const [deleteCampaignDialogOpen, setDeleteCampaignDialogOpen] = useState(false);
   const [deleteCampaignId, setDeleteCampaignId] = useState<string | null>(null);
+  const [deleteTemplateDialogOpen, setDeleteTemplateDialogOpen] = useState(false);
+  const [deleteTemplateSlug, setDeleteTemplateSlug] = useState<string | null>(null);
+  const [deleteTemplateName, setDeleteTemplateName] = useState<string>("");
 
   // Usage limits & upgrade dialog
   const usageLimits = useUsageLimits(user?.id);
@@ -1450,8 +1453,15 @@ const Admin = () => {
     }
   };
 
-  const deleteTemplate = async (templateSlug: string, templateName: string) => {
-    if (!confirm(`Delete "${templateName}"? This cannot be undone. Any campaigns using this template will be unlinked.`)) return;
+  const promptDeleteTemplate = (templateSlug: string, templateName: string) => {
+    setDeleteTemplateSlug(templateSlug);
+    setDeleteTemplateName(templateName);
+    setDeleteTemplateDialogOpen(true);
+  };
+
+  const deleteTemplate = async () => {
+    if (!deleteTemplateSlug) return;
+    const templateSlug = deleteTemplateSlug;
     try {
       // First, get the template id
       const { data: tmpl } = await supabase
@@ -1477,9 +1487,11 @@ const Admin = () => {
         .eq("slug", templateSlug);
       if (error) throw error;
       toast({ title: "Template deleted" });
+      setDeleteTemplateDialogOpen(false);
       fetchTemplates();
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
+      setDeleteTemplateDialogOpen(false);
     }
   };
 
@@ -1599,7 +1611,7 @@ const Admin = () => {
               }}
               onDuplicate={duplicateTemplate}
               onForceDuplicate={forceDuplicateTemplate}
-              onDelete={deleteTemplate}
+              onDelete={promptDeleteTemplate}
             />
           </TabsContent>
 
@@ -3283,6 +3295,27 @@ const Admin = () => {
               }}
             >
               Delete Now
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Template Delete Confirmation Dialog */}
+      <AlertDialog open={deleteTemplateDialogOpen} onOpenChange={setDeleteTemplateDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this template?</AlertDialogTitle>
+            <AlertDialogDescription>
+              "{deleteTemplateName}" will be permanently deleted. Any campaigns using this template will be unlinked. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteTemplateDialogOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={deleteTemplate}
+            >
+              Delete Template
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

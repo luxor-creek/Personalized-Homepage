@@ -321,6 +321,15 @@ export default function TemplatePageGrid({
                       <Copy className="w-3 h-3 mr-1.5" />
                       {duplicating === t.slug ? "Cloning…" : "Use Template"}
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 px-2 text-slate-400 hover:text-slate-600"
+                      title="Preview"
+                      onClick={() => onPreview(t.slug, !!t.is_builder_template)}
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                    </Button>
                     {isAdmin && (
                       <Link to={`/template-editor/${t.slug}`}>
                         <Button variant="ghost" size="sm" className="h-8 px-2 text-slate-400 hover:text-slate-600" title="Edit">
