@@ -2109,7 +2109,7 @@ const Admin = () => {
                                             <p className="font-semibold text-sm text-foreground">Next steps in Mailchimp:</p>
                                             <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
                                               <li>Go to Mailchimp and <strong className="text-foreground">create an email campaign</strong> targeting this audience</li>
-                                              <li>In your email template, add a button or link and set the URL to <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code></li>
+                                              <li>In your email template, where you want the personalized page link, copy this tag in its spot: <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code>. Mailchimp places the correct personalized link based on the email address attached to it.</li>
                                               <li>Each recipient will get their own unique personalized page link</li>
                                               <li>Hit <strong className="text-foreground">Send</strong> in Mailchimp — that's it!</li>
                                             </ol>
@@ -2130,12 +2130,11 @@ const Admin = () => {
                                             <Button
                                               variant="outline"
                                               onClick={() => {
-                                                setMailchimpDialogOpen(false);
-                                                setAddContactsSheetOpen(false);
                                                 setMailchimpResult(null);
+                                                setSelectedMailchimpList(null);
                                               }}
                                             >
-                                              Done
+                                              Add More Contacts
                                             </Button>
                                           </div>
                                         </>
@@ -2245,7 +2244,7 @@ const Admin = () => {
                                             <p className="font-semibold text-sm text-foreground">Next steps in Mailchimp:</p>
                                             <ol className="list-decimal list-inside space-y-2 text-sm text-muted-foreground">
                                               <li>Go to Mailchimp and <strong className="text-foreground">create an email campaign</strong> targeting this audience</li>
-                                              <li>In your email template, add a button or link and set the URL to <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code></li>
+                                              <li>In your email template, where you want the personalized page link, copy this tag in its spot: <code className="bg-muted px-1.5 py-0.5 rounded font-mono text-xs text-primary">{mailchimpResult.mergeTag}</code>. Mailchimp places the correct personalized link based on the email address attached to it.</li>
                                               <li>Each recipient will get their own unique personalized page link</li>
                                               <li>Hit <strong className="text-foreground">Send</strong> in Mailchimp — that's it!</li>
                                             </ol>
@@ -2258,8 +2257,8 @@ const Admin = () => {
                                                 Open Mailchimp
                                               </Button>
                                             </a>
-                                            <Button variant="outline" onClick={() => { setMailchimpDialogOpen(false); setAddContactsSheetOpen(false); setMailchimpResult(null); }}>
-                                              Done
+                                            <Button variant="outline" onClick={() => { setMailchimpResult(null); setSelectedMailchimpList(null); }}>
+                                              Add More Contacts
                                             </Button>
                                           </div>
                                         </>
@@ -2292,12 +2291,6 @@ const Admin = () => {
                                           </div>
                                         </div>
                                       )}
-
-                                      <div className="bg-muted/50 rounded-lg p-3">
-                                        <p className="text-xs text-muted-foreground">
-                                          We'll create a personalized page for each contact and write the URL back to a <code className="bg-muted px-1 py-0.5 rounded font-mono">*|PPAGE|*</code> merge field on each contact. Use this merge tag in your Mailchimp email template.
-                                        </p>
-                                      </div>
 
                                       <Button 
                                         onClick={sendMailchimpCampaign} 
