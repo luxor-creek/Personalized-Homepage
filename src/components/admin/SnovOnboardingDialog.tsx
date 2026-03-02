@@ -198,10 +198,11 @@ export default function SnovOnboardingDialog({ open, onOpenChange, onConnected }
                   <Input
                     id="snov-uid"
                     type="text"
-                    placeholder="Paste your User ID"
+                    placeholder="e.g. c57a0459f6t141659ea75cccb393c5"
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                   />
+                  <p className="text-xs text-muted-foreground">A long alphanumeric string — not your email address.</p>
                 </div>
 
                 <div className="space-y-1.5">
