@@ -331,7 +331,7 @@ export default function TemplatePageGrid({
                       <Eye className="w-3.5 h-3.5" />
                     </Button>
                     {isAdmin && (
-                      <Link to={`/template-editor/${t.slug}`}>
+                      <Link to={t.is_builder_template ? `/builder/${t.slug}` : `/template-editor/${t.slug}`}>
                         <Button variant="ghost" size="sm" className="h-8 px-2 text-slate-400 hover:text-slate-600" title="Edit">
                           <Pencil className="w-3.5 h-3.5" />
                         </Button>

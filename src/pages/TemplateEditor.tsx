@@ -16,20 +16,18 @@ import EditableSampleRequestForm from "@/components/editor/EditableSampleRequest
 import ButtonToggleWrapper from "@/components/editor/ButtonToggleWrapper";
 import { supabase } from "@/integrations/supabase/client";
 
-const DEFAULT_ABOUT_CONTENT = `Most police recruitment videos aren't broken.
+const DEFAULT_ABOUT_CONTENT = `Most recruitment videos aren't broken.
 They're just outdated.
 
 They were made for a time when interest was high and competition was low. Today, recruits are more cautious, more informed, and quicker to walk away if something feels unrealistic or unclear.
 
 We see the same pattern again and again.
-Departments invest in a video that looks professional, but doesn't answer the questions candidates are really asking. The result. Fewer qualified applicants and more drop-off later in the process.
+Organizations invest in a video that looks professional, but doesn't answer the questions candidates are really asking. The result. Fewer qualified applicants and more drop-off later in the process.
 
-**Kicker builds recruitment videos with one goal.**
+**We build recruitment videos with one goal.**
 **Help the right people self-select into the job.**
 
-That means showing the work honestly. Letting officers speak in their own words. Being clear about expectations, career paths, and what the job actually demands.
-
-We recently wrapped a recruitment video for the Pittsburgh Police Department using this approach. The department saw stronger engagement and better-fit applicants because the video did its job early in the funnel.
+That means showing the work honestly. Letting people speak in their own words. Being clear about expectations, career paths, and what the job actually demands.
 
 If your current recruitment video is more than a few years old, it's worth asking a simple question.
 *Is it helping your pipeline. Or quietly hurting it.*`;
@@ -592,7 +590,7 @@ const TemplateEditor = () => {
                 {(template.testimonials?.length > 0 
                   ? template.testimonials 
                   : [
-                      { quote: "Kicker made complex messaging simple and engaging. Fast, on-budget, and on-brand." },
+                      { quote: "The production process was seamless. Fast, on-budget, and on-brand." },
                       { quote: "Smooth process from brief to delivery. Their team felt like an extension of ours." },
                       { quote: "The videos moved the needle on demos and deal velocity. Highly recommend." },
                     ]
@@ -606,7 +604,7 @@ const TemplateEditor = () => {
                           const existingTestimonials = template.testimonials?.length > 0 
                             ? template.testimonials 
                             : [
-                                { quote: "Kicker made complex messaging simple and engaging. Fast, on-budget, and on-brand." },
+                                { quote: "The production process was seamless. Fast, on-budget, and on-brand." },
                                 { quote: "Smooth process from brief to delivery. Their team felt like an extension of ours." },
                                 { quote: "The videos moved the needle on demos and deal velocity. Highly recommend." },
                               ];
@@ -819,7 +817,7 @@ const TemplateEditor = () => {
           {isSectionVisible("show_form") && (
           <EditableSampleRequestForm
             formTitle={template.form_section_title ?? "Request a Sample Video"}
-            formSubtitle={template.form_section_subtitle ?? "See what Kicker can do with your content. We'll generate a sample video from your existing page—no creative brief required."}
+            formSubtitle={template.form_section_subtitle ?? "See what we can do with your content. We'll generate a sample video from your existing page—no creative brief required."}
             onTitleChange={(value) => updateField("form_section_title", value)}
             onSubtitleChange={(value) => updateField("form_section_subtitle", value)}
             formSteps={template.form_steps}
@@ -871,7 +869,7 @@ const TemplateEditor = () => {
                 <img src={template.logo_url} alt="Logo" className="h-6 object-contain" />
               ) : null}
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Kicker Video. Professional video production.
+                © {new Date().getFullYear()} Your Company. Professional video production.
               </p>
             </div>
           </footer>
@@ -967,7 +965,7 @@ const TemplateEditor = () => {
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full text-primary text-sm font-medium mb-8">
                   <RichTextEditor
-                    value={template.hero_badge || "Kicker Video — B2B Video Production"}
+                    value={template.hero_badge || "Video Production Demo"}
                     onChange={(value) => updateField("hero_badge", value)}
                     fieldName="Hero Badge"
                     supportsPersonalization
@@ -1362,7 +1360,7 @@ const TemplateEditor = () => {
           {isSectionVisible("show_form") && (
           <EditableSampleRequestForm
             formTitle={template.form_section_title || "Request a Sample Video"}
-            formSubtitle={template.form_section_subtitle || "See what Kicker can do with your content. We'll generate a sample video from your existing page—no creative brief required."}
+            formSubtitle={template.form_section_subtitle || "See what we can do with your content. We'll generate a sample video from your existing page—no creative brief required."}
             onTitleChange={(value) => updateField("form_section_title", value)}
             onSubtitleChange={(value) => updateField("form_section_subtitle", value)}
             formSteps={template.form_steps}
@@ -1374,7 +1372,7 @@ const TemplateEditor = () => {
           <footer className="py-6 bg-gray-100 border-t border-gray-200">
             <div className="container mx-auto px-4 text-center">
               <p className="text-sm text-gray-500">
-                © {new Date().getFullYear()} Kicker Video. All rights reserved.
+                © {new Date().getFullYear()} Your Company. All rights reserved.
               </p>
             </div>
           </footer>
@@ -1559,7 +1557,7 @@ const TemplateEditor = () => {
             <div className="max-w-3xl mx-auto text-center mb-12">
               <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
                 <RichTextEditor
-                  value={template.features_title || "Why Departments Choose Kicker Video"}
+                  value={template.features_title || "Why Organizations Choose Us"}
                   onChange={(value) => updateField("features_title", value)}
                   fieldName="About Section Title"
                   supportsPersonalization
@@ -1615,7 +1613,7 @@ const TemplateEditor = () => {
               </h2>
               <div className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
                 <RichTextEditor
-                  value={template.contact_subtitle || "Let's discuss how Kicker Video can help your department attract the next generation of law enforcement professionals."}
+                  value={template.contact_subtitle || "Let's discuss how we can help your organization attract top talent with compelling video content."}
                   onChange={(value) => updateField("contact_subtitle", value)}
                   fieldName="Contact Subtitle"
                   supportsPersonalization
@@ -1625,7 +1623,7 @@ const TemplateEditor = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                 <ButtonToggleWrapper configKey="show_contact_cta_primary" visible={isSectionVisible("show_contact_cta_primary")} onToggle={handleSectionVisibilityChange}>
                   <Button variant="hero" size="xl" asChild>
-                    <a href="mailto:hello@kickervideo.com">
+                    <a href="mailto:hello@example.com">
                       <Mail className="w-5 h-5" />
                       Contact Us
                     </a>
@@ -1633,7 +1631,7 @@ const TemplateEditor = () => {
                 </ButtonToggleWrapper>
                 <ButtonToggleWrapper configKey="show_contact_cta_secondary" visible={isSectionVisible("show_contact_cta_secondary")} onToggle={handleSectionVisibilityChange}>
                   <Button variant="heroOutline" size="xl" asChild>
-                    <a href="https://kickervideo.com" target="_blank" rel="noopener noreferrer">
+                    <a href="https://example.com" target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-5 h-5" />
                       Visit Website
                     </a>
@@ -1643,25 +1641,25 @@ const TemplateEditor = () => {
 
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center text-muted-foreground">
                 <a 
-                  href="mailto:hello@kickervideo.com" 
+                  href="mailto:hello@example.com" 
                   className="flex items-center gap-2 hover:text-primary transition-colors"
                 >
                   <Mail className="w-4 h-4" />
                   <EditableText
-                    value={template.contact_email || "hello@kickervideo.com"}
+                    value={template.contact_email || "hello@example.com"}
                     onChange={(value) => updateField("contact_email", value)}
                     fieldName="Contact Email"
                   />
                 </a>
                 <span className="hidden sm:block text-border">|</span>
                 <a 
-                  href="https://kickervideo.com" 
+                  href="https://example.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-primary transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  kickervideo.com
+                  example.com
                 </a>
               </div>
             </div>
@@ -1678,16 +1676,16 @@ const TemplateEditor = () => {
               ) : null}
 
               <p className="text-sm text-muted-foreground">
-                © {new Date().getFullYear()} Kicker Video. Professional video production.
+                © {new Date().getFullYear()} Your Company. Professional video production.
               </p>
 
               <a 
-                href="https://kickervideo.com" 
+                href="https://example.com" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-sm text-primary hover:text-primary/80 transition-colors"
               >
-                kickervideo.com
+                example.com
               </a>
             </div>
           </div>
