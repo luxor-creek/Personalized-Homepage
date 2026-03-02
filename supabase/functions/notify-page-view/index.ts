@@ -138,7 +138,7 @@ serve(async (req) => {
           </div>
 
           <div style="text-align: center; margin-bottom: 24px;">
-            <a href="https://recruitmentvideoproduction.lovable.app/admin"
+            <a href="https://personalized.page/admin"
                style="display: inline-block; background: #f59e0b; color: #1f2937; font-weight: 600; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 15px;">
               View Campaign Dashboard →
             </a>

@@ -60,7 +60,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
 
           <div style="text-align: center; margin-bottom: 24px;">
-            <a href="https://recruitmentvideoproduction.lovable.app/admin"
+            <a href="https://personalized.page/admin"
                style="display: inline-block; background: #f59e0b; color: #1f2937; font-weight: 600; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 16px;">
               Go to Dashboard →
             </a>

@@ -110,7 +110,7 @@ serve(async (req: Request) => {
       type: "magiclink",
       email,
       options: {
-        redirectTo: `${req.headers.get("origin") || "https://recruitmentvideoproduction.lovable.app"}/auth`,
+        redirectTo: `${req.headers.get("origin") || "https://personalized.page"}/auth`,
       },
     });
 
@@ -134,8 +134,8 @@ serve(async (req: Request) => {
       // Use the hashed_token from the generated link to build the confirmation URL
       const tokenHash = linkData?.properties?.hashed_token;
       const setupUrl = tokenHash
-        ? `${supabaseUrl}/auth/v1/verify?token=${tokenHash}&type=magiclink&redirect_to=${encodeURIComponent(req.headers.get("origin") || "https://recruitmentvideoproduction.lovable.app")}`
-        : `${req.headers.get("origin") || "https://recruitmentvideoproduction.lovable.app"}/auth`;
+        ? `${supabaseUrl}/auth/v1/verify?token=${tokenHash}&type=magiclink&redirect_to=${encodeURIComponent(req.headers.get("origin") || "https://personalized.page")}`
+        : `${req.headers.get("origin") || "https://personalized.page"}/auth`;
 
       const isPaid = plan !== "trial";
 

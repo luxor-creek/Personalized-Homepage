@@ -87,7 +87,7 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
 
               <div style="text-align: center; margin: 24px 0;">
-                <a href="https://recruitmentvideoproduction.lovable.app/pricing"
+                <a href="https://personalized.page/pricing"
                    style="display: inline-block; background: #f59e0b; color: #1f2937; font-weight: 600; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 16px;">
                   View Plans & Upgrade →
                 </a>
@@ -136,7 +136,7 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
 
               <div style="text-align: center; margin: 24px 0;">
-                <a href="https://recruitmentvideoproduction.lovable.app/pricing"
+                <a href="https://personalized.page/pricing"
                    style="display: inline-block; background: #ef4444; color: #ffffff; font-weight: 600; padding: 12px 32px; border-radius: 8px; text-decoration: none; font-size: 16px;">
                   Upgrade Now →
                 </a>
