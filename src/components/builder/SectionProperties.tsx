@@ -372,18 +372,25 @@ const SectionProperties = ({ section, onUpdate, onClose }: SectionPropertiesProp
               <>
                 <div className="space-y-2"><Label>Primary Button</Label><Input value={section.content.buttonText || ''} onChange={(e) => updateContent({ buttonText: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Primary Link</Label><Input value={section.content.buttonLink || ''} onChange={(e) => updateContent({ buttonLink: e.target.value })} /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
               </>
             )}
             <div className="flex items-center justify-between"><Label className="text-xs">Show Secondary Button</Label><Switch checked={!section.content.hideSecondaryButton} onCheckedChange={(v) => updateContent({ hideSecondaryButton: !v })} /></div>
             {!section.content.hideSecondaryButton && (
-              <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+              <>
+                <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Secondary Link</Label><Input value={section.content.secondaryButtonLink || ''} onChange={(e) => updateContent({ secondaryButtonLink: e.target.value })} placeholder="#section or https://..." /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Color</Label><input type="color" value={section.style.secondaryButtonColor || '#ffffff'} onChange={(e) => updateStyle({ secondaryButtonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Text</Label><input type="color" value={section.style.secondaryButtonTextColor || '#000000'} onChange={(e) => updateStyle({ secondaryButtonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
+              </>
             )}
             <Separator />
             <div className="space-y-2"><Label>Hero Image</Label><Input value={section.content.heroImageUrl || ''} onChange={(e) => updateContent({ heroImageUrl: e.target.value })} placeholder="Paste image URL" /><UploadButton label="Upload Image" field="heroImageUrl" /></div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-              <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-            </div>
             <Separator />
             <div className="flex items-center justify-between"><Label className="text-xs">Parallax Effect</Label><Switch checked={!!section.content.parallax} onCheckedChange={(v) => updateContent({ parallax: v })} /></div>
             <p className="text-xs text-muted-foreground">Elements move at different speeds on scroll for a depth effect</p>
@@ -413,16 +420,23 @@ const SectionProperties = ({ section, onUpdate, onClose }: SectionPropertiesProp
               <>
                 <div className="space-y-2"><Label>Primary Button</Label><Input value={section.content.buttonText || ''} onChange={(e) => updateContent({ buttonText: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Primary Link</Label><Input value={section.content.buttonLink || ''} onChange={(e) => updateContent({ buttonLink: e.target.value })} /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
               </>
             )}
             <div className="flex items-center justify-between"><Label className="text-xs">Show Secondary Button</Label><Switch checked={!section.content.hideSecondaryButton} onCheckedChange={(v) => updateContent({ hideSecondaryButton: !v })} /></div>
             {!section.content.hideSecondaryButton && (
-              <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+              <>
+                <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Secondary Link</Label><Input value={section.content.secondaryButtonLink || ''} onChange={(e) => updateContent({ secondaryButtonLink: e.target.value })} placeholder="#section or https://..." /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Color</Label><input type="color" value={section.style.secondaryButtonColor || '#ffffff'} onChange={(e) => updateStyle({ secondaryButtonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Text</Label><input type="color" value={section.style.secondaryButtonTextColor || '#000000'} onChange={(e) => updateStyle({ secondaryButtonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
+              </>
             )}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-              <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-            </div>
             <Separator />
             <div className="flex items-center justify-between"><Label className="text-xs">Parallax Effect</Label><Switch checked={!!section.content.parallax} onCheckedChange={(v) => updateContent({ parallax: v })} /></div>
             <p className="text-xs text-muted-foreground">Elements move at different speeds on scroll for a depth effect</p>
@@ -456,16 +470,23 @@ const SectionProperties = ({ section, onUpdate, onClose }: SectionPropertiesProp
               <>
                 <div className="space-y-2"><Label>Primary Button</Label><Input value={section.content.buttonText || ''} onChange={(e) => updateContent({ buttonText: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Primary Link</Label><Input value={section.content.buttonLink || ''} onChange={(e) => updateContent({ buttonLink: e.target.value })} /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
               </>
             )}
             <div className="flex items-center justify-between"><Label className="text-xs">Show Secondary Button</Label><Switch checked={!section.content.hideSecondaryButton} onCheckedChange={(v) => updateContent({ hideSecondaryButton: !v })} /></div>
             {!section.content.hideSecondaryButton && (
-              <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+              <>
+                <div className="space-y-2"><Label>Secondary Button</Label><Input value={section.content.secondaryButtonText || ''} onChange={(e) => updateContent({ secondaryButtonText: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Secondary Link</Label><Input value={section.content.secondaryButtonLink || ''} onChange={(e) => updateContent({ secondaryButtonLink: e.target.value })} placeholder="#section or https://..." /></div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Color</Label><input type="color" value={section.style.secondaryButtonColor || '#ffffff'} onChange={(e) => updateStyle({ secondaryButtonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                  <div className="space-y-1"><Label className="text-xs">Sec Btn Text</Label><input type="color" value={section.style.secondaryButtonTextColor || '#000000'} onChange={(e) => updateStyle({ secondaryButtonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
+                </div>
+              </>
             )}
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1"><Label className="text-xs">Btn Color</Label><input type="color" value={section.style.buttonColor || '#6d54df'} onChange={(e) => updateStyle({ buttonColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-              <div className="space-y-1"><Label className="text-xs">Btn Text</Label><input type="color" value={section.style.buttonTextColor || '#ffffff'} onChange={(e) => updateStyle({ buttonTextColor: e.target.value })} className="w-8 h-8 rounded border cursor-pointer" /></div>
-            </div>
             <Separator />
             <div className="flex items-center justify-between"><Label className="text-xs">Parallax Effect</Label><Switch checked={!!section.content.parallax} onCheckedChange={(v) => updateContent({ parallax: v })} /></div>
             <p className="text-xs text-muted-foreground">Elements move at different speeds on scroll for a depth effect</p>
