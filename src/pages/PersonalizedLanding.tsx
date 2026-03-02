@@ -256,7 +256,7 @@ const PersonalizedLanding = () => {
           <SectionRenderer
             key={section.id}
             section={section}
-            isPreview={true}
+            isPreview={false}
             personalization={personalizationData}
           />
         ))}
