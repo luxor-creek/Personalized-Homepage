@@ -1542,26 +1542,26 @@ const Admin = () => {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex items-center justify-between gap-4">
-          <TabsList>
+          <TabsList className="bg-transparent border-b border-slate-200 rounded-none p-0 h-auto gap-0">
 
-            <TabsTrigger value="landing-pages" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="landing-pages" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground px-4 pb-2.5 pt-1">
               <Layout className="w-4 h-4 mr-2" />
               Landing Pages
             </TabsTrigger>
-            <TabsTrigger value="campaigns" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Campaigns</TabsTrigger>
+            <TabsTrigger value="campaigns" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground px-4 pb-2.5 pt-1">Campaigns</TabsTrigger>
             {isAdmin && (
-              <TabsTrigger value="beta-questions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger value="beta-questions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground px-4 pb-2.5 pt-1">
                 <HelpCircle className="w-4 h-4 mr-2" />
                 Beta Questions {infoRequestCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary/20 text-primary">{infoRequestCount}</span>}
               </TabsTrigger>
             )}
             {isAdmin && (
-              <TabsTrigger value="form-submissions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger value="form-submissions" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground px-4 pb-2.5 pt-1">
                 <FileText className="w-4 h-4 mr-2" />
                 Form Submissions
               </TabsTrigger>
             )}
-            <TabsTrigger value="variables" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsTrigger value="variables" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground text-muted-foreground px-4 pb-2.5 pt-1">
               <Braces className="w-4 h-4 mr-2" />
               Variables
             </TabsTrigger>
@@ -2669,171 +2669,212 @@ const Admin = () => {
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
-            <div className="max-w-2xl space-y-8">
-              {/* Plan & Billing */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Plan & Billing</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Your current plan and account details.
-                </p>
-              </div>
+            <div className="max-w-[1200px] space-y-6">
 
-              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-primary" />
-                  </div>
+              {/* Plan & Usage — Bento Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Plan Card */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm text-muted-foreground">Plan</p>
-                      <p className="font-semibold text-foreground capitalize">{usageLimits.plan || "trial"}</p>
+                    <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Current Plan</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-2xl font-semibold tracking-tight text-slate-900 capitalize">{usageLimits.plan || "Trial"}</span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${usageLimits.plan === "pro" ? "bg-violet-100 text-violet-700" : usageLimits.plan === "starter" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
+                        {usageLimits.plan === "pro" ? "Pro" : usageLimits.plan === "starter" ? "Starter" : "Trial"}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm text-muted-foreground">Account Email</p>
-                      <p className="text-sm text-foreground">{user?.email}</p>
-                    </div>
+                    <p className="text-sm text-slate-500">{user?.email}</p>
                   </div>
-                  <div className="ml-auto flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setManageSubOpen(true)}>
+                  <div className="flex gap-2 mt-4">
+                    <Button variant="outline" size="sm" className="text-slate-600 border-slate-200 hover:bg-slate-50" onClick={() => setManageSubOpen(true)}>
                       Manage Billing
                     </Button>
-                    <Button size="sm" onClick={() => navigate("/pricing")}>
+                    <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => navigate("/pricing")}>
                       {usageLimits.plan === "trial" ? "Upgrade" : "Change Plan"}
                     </Button>
                   </div>
                 </div>
-              </div>
 
-              {/* Usage */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Usage</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Your account activity to date.
-                </p>
-              </div>
-
-              <div className="bg-card rounded-xl border border-border p-5 space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Personalized Links Generated</span>
-                  <span className="font-medium text-foreground">{usageLimits.pageCount}{!usageLimits.isUnlimited ? ` / ${usageLimits.maxPages}` : ""}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Campaigns Created</span>
-                  <span className="font-medium text-foreground">{usageLimits.campaignCount}{!usageLimits.isUnlimited ? ` / ${usageLimits.maxCampaigns}` : ""}</span>
-                </div>
-                {!usageLimits.isUnlimited && (
-                  <p className="text-xs text-muted-foreground pt-1">Limits are based on your current plan.</p>
-                )}
-              </div>
-
-              {/* Custom Domain */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Custom Domain</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Use your own domain for personalized page links.
-                </p>
-              </div>
-
-              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="custom-domain" className="text-sm font-medium">Domain</Label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Globe className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="custom-domain"
-                        placeholder="pages.yourdomain.com"
-                        value={customDomainDraft}
-                        onChange={(e) => setCustomDomainDraft(e.target.value)}
-                        className="pl-9"
-                      />
-                    </div>
-                    <Button
-                      onClick={saveCustomDomain}
-                      disabled={savingDomain || customDomainDraft.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "") === customDomain}
-                    >
-                      {savingDomain ? "Saving..." : "Save"}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Enter your domain without <code className="bg-muted px-1 rounded">http://</code> or trailing slashes. Example: <code className="bg-muted px-1 rounded">pages.yourcompany.com</code>
-                  </p>
+                {/* Links Metric Card */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Personalized Links</p>
+                  <p className="text-3xl font-semibold tracking-tight text-slate-900">{usageLimits.pageCount}</p>
+                  {!usageLimits.isUnlimited && (
+                    <>
+                      <p className="text-sm text-slate-500 mt-1">of {usageLimits.maxPages} included</p>
+                      <div className="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all"
+                          style={{ width: `${Math.min(100, (usageLimits.pageCount / usageLimits.maxPages) * 100)}%` }}
+                        />
+                      </div>
+                    </>
+                  )}
+                  {usageLimits.isUnlimited && <p className="text-sm text-slate-500 mt-1">Unlimited</p>}
                 </div>
 
-                {customDomain && (
-                  <div className="bg-muted/50 rounded-lg p-3 space-y-1">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Current domain</p>
-                    <p className="text-sm text-foreground font-medium">{customDomain}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Your links will look like: <code className="bg-muted px-1 rounded">https://{customDomain}/p/abc123</code>
-                    </p>
-                  </div>
-                )}
-
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-foreground">DNS Setup</p>
-                  <p className="text-xs text-muted-foreground">
-                    To activate your domain, add a CNAME record with your DNS provider:
-                  </p>
-                  <div className="bg-muted/50 rounded-lg p-3 space-y-1 text-xs font-mono">
-                    <p><span className="text-muted-foreground">Host:</span> <span className="text-foreground">{customDomainDraft || "pages.yourdomain.com"}</span></p>
-                    <p><span className="text-muted-foreground">Points to:</span> <span className="text-foreground">personalized.page</span></p>
-                  </div>
-                  <p className="text-xs text-muted-foreground">DNS changes can take up to 24 hours to update.</p>
+                {/* Campaigns Metric Card */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                  <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Campaigns</p>
+                  <p className="text-3xl font-semibold tracking-tight text-slate-900">{usageLimits.campaignCount}</p>
+                  {!usageLimits.isUnlimited && (
+                    <>
+                      <p className="text-sm text-slate-500 mt-1">of {usageLimits.maxCampaigns} included</p>
+                      <div className="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all"
+                          style={{ width: `${Math.min(100, (usageLimits.campaignCount / usageLimits.maxCampaigns) * 100)}%` }}
+                        />
+                      </div>
+                    </>
+                  )}
+                  {usageLimits.isUnlimited && <p className="text-sm text-slate-500 mt-1">Unlimited</p>}
                 </div>
               </div>
 
-              {/* Integrations */}
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">Integrations</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Connect your outreach tools to automate personalized campaigns.
-                </p>
-              </div>
+              {/* Custom Domain & Integrations — Side-by-side */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
-                      <img src="/snovio.svg" alt="Snov.io" className="w-10 h-10" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">Snov.io</p>
-                      <p className="text-sm text-muted-foreground">
-                        {snovConnected ? "Connected — credentials saved" : "Not connected"}
-                      </p>
+                {/* Custom Domain */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Globe className="w-4 h-4 text-slate-400" />
+                    <h3 className="text-sm font-semibold tracking-tight text-slate-900">Custom Domain</h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          id="custom-domain"
+                          placeholder="pages.yourdomain.com"
+                          value={customDomainDraft}
+                          onChange={(e) => setCustomDomainDraft(e.target.value)}
+                          className="bg-slate-50 focus:bg-white border-slate-200 text-sm"
+                        />
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={saveCustomDomain}
+                        disabled={savingDomain || customDomainDraft.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "") === customDomain}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        {savingDomain ? "Saving..." : "Save"}
+                      </Button>
                     </div>
                   </div>
-                  <Button
-                    variant={snovConnected ? "outline" : "default"}
-                    size="sm"
-                    onClick={() => setSnovOnboardingOpen(true)}
-                  >
-                    {snovConnected ? "Edit Connection" : "Connect"}
-                  </Button>
+
+                  {customDomain && (
+                    <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-100">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span className="text-sm text-slate-700 font-medium">{customDomain}</span>
+                    </div>
+                  )}
+
+                  {/* DNS Code Snippet */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-slate-500">DNS Configuration</p>
+                    <div className="bg-slate-900 rounded-lg p-3 space-y-2 font-mono text-xs">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-slate-400">Host  </span>
+                          <span className="text-green-400">{customDomainDraft || "pages.yourdomain.com"}</span>
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard(customDomainDraft || "pages.yourdomain.com")}
+                          className="text-slate-400 hover:text-white transition-colors p-1"
+                          title="Copy"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-slate-400">CNAME </span>
+                          <span className="text-green-400">personalized.page</span>
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard("personalized.page")}
+                          className="text-slate-400 hover:text-white transition-colors p-1"
+                          title="Copy"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-slate-400">DNS changes can take up to 24 hours to propagate.</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
-                      <img src="/mailchimp.svg" alt="Mailchimp" className="w-10 h-10" />
+                {/* Integrations */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Settings className="w-4 h-4 text-slate-400" />
+                    <h3 className="text-sm font-semibold tracking-tight text-slate-900">Integrations</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3">
+                    {/* Snov.io */}
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
+                          <img src="/snovio.svg" alt="Snov.io" className="w-9 h-9" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-900">Snov.io</p>
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-1.5 h-1.5 rounded-full ${snovConnected ? "bg-green-500" : "bg-slate-300"}`} />
+                            <span className="text-xs text-slate-500">{snovConnected ? "Connected" : "Not connected"}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant={snovConnected ? "outline" : "default"}
+                        size="sm"
+                        className={snovConnected ? "text-slate-600 border-slate-200 hover:bg-slate-50" : "bg-primary hover:bg-primary/90"}
+                        onClick={() => setSnovOnboardingOpen(true)}
+                      >
+                        {snovConnected ? "Manage" : "Connect"}
+                      </Button>
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">Mailchimp</p>
-                      <p className="text-sm text-muted-foreground">
-                        {mailchimpConnected ? "Connected" : "Not connected"}
-                      </p>
+
+                    {/* Mailchimp */}
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg overflow-hidden flex-shrink-0">
+                          <img src="/mailchimp.svg" alt="Mailchimp" className="w-9 h-9" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-900">Mailchimp</p>
+                          <div className="flex items-center gap-1.5">
+                            <div className={`w-1.5 h-1.5 rounded-full ${mailchimpConnected ? "bg-green-500" : "bg-slate-300"}`} />
+                            <span className="text-xs text-slate-500">{mailchimpConnected ? "Connected" : "Not connected"}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant={mailchimpConnected ? "outline" : "default"}
+                        size="sm"
+                        className={mailchimpConnected ? "text-slate-600 border-slate-200 hover:bg-slate-50" : "bg-primary hover:bg-primary/90"}
+                        onClick={() => setMailchimpOnboardingOpen(true)}
+                      >
+                        {mailchimpConnected ? "Manage" : "Connect"}
+                      </Button>
+                    </div>
+
+                    {/* Coming soon placeholders */}
+                    <div className="flex items-center justify-between p-3 rounded-lg border border-dashed border-slate-200">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+                          <Mail className="w-4 h-4 text-slate-300" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-slate-400">HubSpot</p>
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-400">Coming Soon</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <Button
-                    variant={mailchimpConnected ? "outline" : "default"}
-                    size="sm"
-                    onClick={() => setMailchimpOnboardingOpen(true)}
-                  >
-                    {mailchimpConnected ? "Edit Connection" : "Connect"}
-                  </Button>
                 </div>
               </div>
 
