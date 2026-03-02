@@ -1344,7 +1344,7 @@ const Admin = () => {
       );
       if (existingClone) {
         // Navigate to existing clone instead of creating another
-        navigate(existingClone.is_builder_template ? `/builder/${existingClone.slug}` : `/template-editor/${existingClone.slug}`);
+        navigate(`/builder/${existingClone.slug}`);
         return;
       }
 
@@ -3235,7 +3235,7 @@ const Admin = () => {
                 variant="destructive"
                 onClick={() => {
                   setLiveWarningDialogOpen(false);
-                  navigate(liveWarningIsBuilder ? `/builder/${liveWarningEditSlug}` : `/template-editor/${liveWarningEditSlug}`);
+                  navigate(`/builder/${liveWarningEditSlug}`);
                 }}
               >
                 <AlertTriangle className="w-4 h-4 mr-2" />
@@ -3259,7 +3259,7 @@ const Admin = () => {
           <div className="flex-1 overflow-auto" style={{ height: 'calc(90vh - 60px)' }}>
             {previewTemplateSlug && (
               <iframe
-                src={previewIsBuilder ? `/builder-preview/${previewTemplateSlug}` : `/template-editor/${previewTemplateSlug}?preview=true`}
+                src={`/builder-preview/${previewTemplateSlug}`}
                 className="w-full border-0 pointer-events-none"
                 style={{ height: '300vh' }}
                 title="Template preview"

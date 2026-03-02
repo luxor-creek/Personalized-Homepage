@@ -36,9 +36,7 @@ const TemplateMiniPreview = ({ slug, isBuilderTemplate, thumbnailUrl }: Template
     return () => observer.disconnect();
   }, [hasThumbnail]);
 
-  const previewUrl = isBuilderTemplate
-    ? `/builder-preview/${slug}`
-    : `/template-editor/${slug}?preview=true`;
+  const previewUrl = `/builder-preview/${slug}`;
 
   return (
     <div ref={containerRef} className="w-full h-full relative overflow-hidden bg-muted">

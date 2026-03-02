@@ -331,7 +331,7 @@ export default function TemplatePageGrid({
                       <Eye className="w-3.5 h-3.5" />
                     </Button>
                     {isAdmin && (
-                      <Link to={t.is_builder_template ? `/builder/${t.slug}` : `/template-editor/${t.slug}`}>
+                      <Link to={`/builder/${t.slug}`}>
                         <Button variant="ghost" size="sm" className="h-8 px-2 text-slate-400 hover:text-slate-600" title="Edit">
                           <Pencil className="w-3.5 h-3.5" />
                         </Button>
@@ -397,7 +397,7 @@ function TemplateCard({
               <Pencil className="w-3 h-3 mr-1.5" />Edit
             </Button>
           ) : (
-            <Link to={t.is_builder_template ? `/builder/${t.slug}` : `/template-editor/${t.slug}`}>
+            <Link to={`/builder/${t.slug}`}>
               <Button size="sm" className="h-8 text-xs shadow-lg bg-white text-slate-900 hover:bg-slate-100">
                 <Pencil className="w-3 h-3 mr-1.5" />Edit
               </Button>
@@ -487,7 +487,7 @@ function TemplateListRow({
                 <Pencil className="w-3.5 h-3.5 mr-2" />Edit
               </DropdownMenuItem>
             ) : (
-              <Link to={t.is_builder_template ? `/builder/${t.slug}` : `/template-editor/${t.slug}`}>
+              <Link to={`/builder/${t.slug}`}>
                 <DropdownMenuItem><Pencil className="w-3.5 h-3.5 mr-2" />Edit</DropdownMenuItem>
               </Link>
             )}

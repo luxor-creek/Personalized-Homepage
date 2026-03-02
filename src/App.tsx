@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import Homepage from "./pages/Homepage";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -11,7 +11,8 @@ import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import PersonalizedLanding from "./pages/PersonalizedLanding";
 
-import TemplateEditor from "./pages/TemplateEditor";
+// Legacy TemplateEditor removed — all templates now use the Builder
+// import TemplateEditor from "./pages/TemplateEditor";
 import WineVideoTemplate from "./pages/WineVideoTemplate";
 import BuilderPage from "./pages/BuilderPage";
 import BuilderPreview from "./pages/BuilderPreview";
@@ -22,6 +23,12 @@ import MailchimpCallback from "./pages/MailchimpCallback";
 import AuthenticatedChatBubble from "./components/AuthenticatedChatBubble";
 
 const queryClient = new QueryClient();
+
+// Redirect legacy /template-editor/:slug and /admin/edit/:slug to /builder/:slug
+function RedirectToBuilder() {
+  const { slug } = useParams();
+  return <Navigate to={`/builder/${slug}`} replace />;
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -40,11 +47,11 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="/auth/mailchimp/callback" element={<MailchimpCallback />} />
-          <Route path="/admin/edit/:slug" element={<TemplateEditor />} />
+          <Route path="/admin/edit/:slug" element={<RedirectToBuilder />} />
           
           <Route path="/wine-video" element={<WineVideoTemplate />} />
           <Route path="/view/:token" element={<PersonalizedLanding />} />
-          <Route path="/template-editor/:slug" element={<TemplateEditor />} />
+          <Route path="/template-editor/:slug" element={<RedirectToBuilder />} />
           <Route path="/builder" element={<BuilderPage />} />
           <Route path="/builder/:slug" element={<BuilderPage />} />
           <Route path="/builder-preview/:slug" element={<BuilderPreview />} />

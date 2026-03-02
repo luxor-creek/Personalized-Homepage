@@ -558,9 +558,7 @@ const ManualImportFlow = ({ campaignId, templateId, templateSlug, isBuilderTempl
     // Build preview URL with personalization query params
     const previewUrl = templateSlug
       ? (() => {
-          const base = isBuilderTemplate
-            ? `/builder-preview/${templateSlug}`
-            : `/template-editor/${templateSlug}?preview=true`;
+          const base = `/builder-preview/${templateSlug}`;
           const sep = base.includes("?") ? "&" : "?";
           const params = new URLSearchParams();
           if (currentContact.first_name) params.set("p_first_name", currentContact.first_name);
