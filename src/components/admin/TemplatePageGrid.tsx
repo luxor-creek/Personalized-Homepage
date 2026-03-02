@@ -440,7 +440,7 @@ function TemplateCard({
                 <Copy className="w-3.5 h-3.5 mr-2" />Duplicate
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onDelete(t.slug, t.name)} className="text-red-600 focus:text-red-600">
+              <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onDelete(t.slug, t.name); }} className="text-red-600 focus:text-red-600">
                 <Trash2 className="w-3.5 h-3.5 mr-2" />Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -498,7 +498,7 @@ function TemplateListRow({
               <Copy className="w-3.5 h-3.5 mr-2" />Duplicate
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => onDelete(t.slug, t.name)} className="text-red-600 focus:text-red-600">
+            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); onDelete(t.slug, t.name); }} className="text-red-600 focus:text-red-600">
               <Trash2 className="w-3.5 h-3.5 mr-2" />Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

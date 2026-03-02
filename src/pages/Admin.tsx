@@ -3301,19 +3301,19 @@ const Admin = () => {
       </AlertDialog>
 
       {/* Template Delete Confirmation Dialog */}
-      <AlertDialog open={deleteTemplateDialogOpen} onOpenChange={setDeleteTemplateDialogOpen}>
+      <AlertDialog open={deleteTemplateDialogOpen} onOpenChange={(open) => { if (!open) setDeleteTemplateDialogOpen(false); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to delete this template?</AlertDialogTitle>
             <AlertDialogDescription>
-              "{deleteTemplateName}" will be permanently deleted. Any campaigns using this template will be unlinked. This cannot be undone.
+              &ldquo;{deleteTemplateName}&rdquo; will be permanently deleted. Any campaigns using this template will be unlinked. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setDeleteTemplateDialogOpen(false)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={deleteTemplate}
+              onClick={(e) => { e.preventDefault(); deleteTemplate(); }}
             >
               Delete Template
             </AlertDialogAction>
