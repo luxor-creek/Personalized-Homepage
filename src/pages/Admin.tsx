@@ -20,6 +20,7 @@ import LinkedInEnrichDialog from "@/components/admin/LinkedInEnrichDialog";
 import AICsvMapper from "@/components/admin/AICsvMapper";
 import ManualImportFlow from "@/components/admin/ManualImportFlow";
 import SnovOnboardingDialog from "@/components/admin/SnovOnboardingDialog";
+import MailchimpOnboardingDialog from "@/components/admin/MailchimpOnboardingDialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import type { User, Session } from "@supabase/supabase-js";
@@ -190,6 +191,15 @@ const Admin = () => {
   const [loadingSnovLists, setLoadingSnovLists] = useState(false);
   const [selectedSnovList, setSelectedSnovList] = useState<number | null>(null);
   const [selectedSnovCampaignList, setSelectedSnovCampaignList] = useState<number | null>(null);
+
+  // Mailchimp integration state
+  const [mailchimpOnboardingOpen, setMailchimpOnboardingOpen] = useState(false);
+  const [mailchimpConnected, setMailchimpConnected] = useState(false);
+  const [mailchimpDialogOpen, setMailchimpDialogOpen] = useState(false);
+  const [mailchimpLists, setMailchimpLists] = useState<Array<{ id: string; name: string; memberCount: number }>>([]);
+  const [loadingMailchimpLists, setLoadingMailchimpLists] = useState(false);
+  const [selectedMailchimpList, setSelectedMailchimpList] = useState<string | null>(null);
+  const [sendingMailchimp, setSendingMailchimp] = useState(false);
   const [snovEmailConfig, setSnovEmailConfig] = useState({
     subject: "{{first_name}}, check out your personalized video",
     body: "Hi {{first_name}},\n\nI created a personalized video just for you. Check it out here:\n\n{{country}}\n\nLet me know what you think!\n\nBest regards",
@@ -315,6 +325,7 @@ const Admin = () => {
       fetchTemplates();
       fetchCustomDomain();
       checkSnovConnection();
+      checkMailchimpConnection();
       if (isAdmin) {
         fetchInfoRequests();
         fetchLiveTemplateIds();
@@ -331,6 +342,17 @@ const Admin = () => {
       .eq("provider", "snov")
       .maybeSingle();
     setSnovConnected(!!(data as any)?.id);
+  };
+
+  const checkMailchimpConnection = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("integration_credentials" as any)
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("provider", "mailchimp")
+      .maybeSingle();
+    setMailchimpConnected(!!(data as any)?.id);
   };
 
   const fetchCustomDomain = async () => {
@@ -1223,6 +1245,81 @@ const Admin = () => {
     fetchSnovCampaigns();
   };
 
+  // Mailchimp functions
+  const openMailchimpDialog = async () => {
+    setMailchimpDialogOpen(true);
+    setSelectedMailchimpList(null);
+    setLoadingMailchimpLists(true);
+    try {
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mailchimp-get-lists`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setMailchimpLists(data.lists || []);
+      } else {
+        throw new Error(data.error || "Failed to fetch audiences");
+      }
+    } catch (error: any) {
+      toast({ title: "Error fetching Mailchimp audiences", description: error.message, variant: "destructive" });
+    } finally {
+      setLoadingMailchimpLists(false);
+    }
+  };
+
+  const sendMailchimpCampaign = async () => {
+    if (!selectedMailchimpList || !selectedCampaign) {
+      toast({ title: "Select an audience", description: "Please select a Mailchimp audience to import.", variant: "destructive" });
+      return;
+    }
+    setSendingMailchimp(true);
+    try {
+      const session = (await supabase.auth.getSession()).data.session;
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mailchimp-send-campaign`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            listId: selectedMailchimpList,
+            campaignId: selectedCampaign.id,
+            templateId: selectedCampaign.template_id,
+          }),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        toast({
+          title: "Success!",
+          description: `Enriched ${data.added} contacts. Use *|PPAGE|* in your Mailchimp email template for the personalized link.`,
+        });
+        setMailchimpDialogOpen(false);
+        setAddContactsSheetOpen(false);
+        fetchPages(selectedCampaign.id);
+        fetchCampaigns();
+        usageLimits.refetchLimits();
+      } else {
+        throw new Error(data.error || "Failed to enrich contacts");
+      }
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setSendingMailchimp(false);
+    }
+  };
+
   const duplicateTemplate = async (templateSlug: string) => {
     if (!user) return;
     setDuplicating(templateSlug);
@@ -1964,6 +2061,92 @@ const Admin = () => {
                                   </Button>
                                 )}
 
+                                {/* Mailchimp */}
+                                {mailchimpConnected ? (
+                                <Dialog open={mailchimpDialogOpen} onOpenChange={setMailchimpDialogOpen}>
+                                  <DialogTrigger asChild>
+                                    <Button variant="outline" className="w-full justify-start" onClick={openMailchimpDialog}>
+                                      <Mail className="w-4 h-4 mr-2" />
+                                      Import from Mailchimp
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-lg">
+                                    <DialogHeader>
+                                      <DialogTitle>Import from Mailchimp</DialogTitle>
+                                      <DialogDescription>
+                                        Select a Mailchimp audience. We'll create personalized pages and write the link back as a merge field.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="space-y-4 pt-4">
+                                      {loadingMailchimpLists ? (
+                                        <div className="flex items-center justify-center py-4">
+                                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                                        </div>
+                                      ) : mailchimpLists.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground">No audiences found. Create an audience in Mailchimp first.</p>
+                                      ) : (
+                                        <div className="space-y-2">
+                                          <Label>Select Audience</Label>
+                                          <div className="grid gap-2 max-h-48 overflow-y-auto">
+                                            {mailchimpLists.map((list) => (
+                                              <div
+                                                key={list.id}
+                                                onClick={() => setSelectedMailchimpList(list.id)}
+                                                className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                                                  selectedMailchimpList === list.id
+                                                    ? "border-primary bg-primary/10"
+                                                    : "border-border hover:border-primary/50"
+                                                }`}
+                                              >
+                                                <div className="flex justify-between items-center">
+                                                  <span className="font-medium">{list.name}</span>
+                                                  <span className="text-sm text-muted-foreground">{list.memberCount} members</span>
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                          <p className="text-xs text-muted-foreground">
+                                            Each contact will get a personalized page. Use <code>*|PPAGE|*</code> in your Mailchimp email template for the link.
+                                          </p>
+                                        </div>
+                                      )}
+
+                                      <Button
+                                        onClick={sendMailchimpCampaign}
+                                        className="w-full"
+                                        disabled={!selectedMailchimpList || sendingMailchimp}
+                                      >
+                                        {sendingMailchimp ? (
+                                          <>
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
+                                            Enriching contacts...
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Mail className="w-4 h-4 mr-2" />
+                                            Import & Enrich
+                                          </>
+                                        )}
+                                      </Button>
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    className="w-full justify-start"
+                                    onClick={() => {
+                                      setAddContactsSheetOpen(false);
+                                      setActiveTab("settings");
+                                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }}
+                                  >
+                                    <Mail className="w-4 h-4 mr-2" />
+                                    Connect Mailchimp
+                                    <span className="ml-auto text-xs text-muted-foreground">Set up in Settings</span>
+                                  </Button>
+                                )}
+
                                 <LinkedInEnrichDialog
                                   campaignId={selectedCampaign.id}
                                   templateId={selectedCampaign.template_id}
@@ -2454,6 +2637,36 @@ const Admin = () => {
                 open={snovOnboardingOpen}
                 onOpenChange={setSnovOnboardingOpen}
                 onConnected={() => checkSnovConnection()}
+              />
+
+              {/* Mailchimp */}
+              <div className="bg-card rounded-xl border border-border p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-yellow-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Mailchimp</p>
+                      <p className="text-sm text-muted-foreground">
+                        {mailchimpConnected ? "Connected — API key saved" : "Not connected"}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant={mailchimpConnected ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => setMailchimpOnboardingOpen(true)}
+                  >
+                    {mailchimpConnected ? "Edit Connection" : "Connect"}
+                  </Button>
+                </div>
+              </div>
+
+              <MailchimpOnboardingDialog
+                open={mailchimpOnboardingOpen}
+                onOpenChange={setMailchimpOnboardingOpen}
+                onConnected={() => checkMailchimpConnection()}
               />
             </div>
           </TabsContent>
