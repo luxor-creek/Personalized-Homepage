@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
+import ZapierAuth from "./pages/ZapierAuth";
 import PersonalizedLanding from "./pages/PersonalizedLanding";
 
 // Legacy TemplateEditor removed — all templates now use the Builder
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/workspace" element={<Admin />} />
           <Route path="/admin" element={<Navigate to="/workspace" replace />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/auth/zapier" element={<ZapierAuth />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/billing" element={<Billing />} />
