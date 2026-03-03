@@ -423,13 +423,13 @@ const IntegrationGuideSlideout = ({
       icon: Zap,
       title: "The Auto-Enhancement",
       description:
-        'Hit "Generate" and we create a unique field in your Mailchimp/Snov.io list called Personalized_URL—one unique link per contact.',
+        'Hit "Generate" and we create a unique field in your Mailchimp/Snov.io list called PPAGE—one unique link per contact.',
     },
     {
       icon: Rocket,
       title: "Send the Campaign",
       description:
-        "In your email builder, use the merge tag *|Personalized_URL|*. Every recipient gets their own custom destination.",
+        "In your email builder, use the merge tag *|PPAGE|*. Every recipient gets their own custom destination.",
     },
   ];
 
@@ -487,7 +487,7 @@ const IntegrationGuideSlideout = ({
 
           <div className="mt-8 p-4 bg-primary/[0.04] rounded-xl border border-primary/10">
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Tip:</strong> Your Personalized_URL field stays synced. Update a page template and every link refreshes automatically—no re-sending needed.
+              <strong className="text-foreground">Tip:</strong> Your PPAGE field stays synced. Update a page template and every link refreshes automatically—no re-sending needed.
             </p>
           </div>
         </div>
