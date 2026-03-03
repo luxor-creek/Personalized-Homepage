@@ -29,6 +29,10 @@ import {
   ShieldCheck,
   Layers,
   Sparkles,
+  Briefcase,
+  HeartHandshake,
+  Ticket,
+  GraduationCap,
 } from "lucide-react";
 
 /* ─────────────────────────── Helper: Animate-on-scroll ─────────── */
@@ -91,11 +95,11 @@ const HeroSection = () => {
               Beta Now Open
             </div>
             <h1 className="font-display text-4xl md:text-5xl lg:text-[3.4rem] xl:text-[3.75rem] text-foreground leading-[1.08] mb-6 animate-fade-up-delay">
-              Stop Sending Generic Links.{" "}
-              <span className="text-gradient">Start Building Connections.</span>
+              Make every digital interaction feel like a{" "}
+              <span className="text-gradient">1-to-1 conversation.</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-9 animate-fade-up-delay-2">
-              Create a custom landing page for every lead on your list—automatically. Sync with Mailchimp and Snov.io to launch 1-to-1 marketing campaigns in minutes.
+              Whether you're booking sales demos, hitting fundraising goals, or inviting VIPs to an exclusive event—Personalized.page turns your generic email list into a series of custom, high-impact experiences.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 animate-fade-up-delay-3">
               <Button
@@ -600,6 +604,156 @@ const CustomizationGridSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════
+   SECTION — USE CASE GRID
+   ═══════════════════════════════════════════════════════════════════ */
+const UseCaseGridSection = () => {
+  const { ref, visible } = useInView();
+
+  const useCases = [
+    {
+      icon: Briefcase,
+      role: "A Founder / SDR",
+      action: "Send custom product demos to every lead in your Snov.io list.",
+      result: "More meetings booked.",
+      accent: "bg-blue-500/[0.08] text-blue-600",
+    },
+    {
+      icon: HeartHandshake,
+      role: "A Non-Profit",
+      action: "Show donors exactly how their specific contribution helped.",
+      result: "40% higher donor retention.",
+      accent: "bg-rose-500/[0.08] text-rose-600",
+    },
+    {
+      icon: Ticket,
+      role: "An Event Host",
+      action: 'Send "Golden Ticket" invites with the guest\'s name and photo.',
+      result: "Sold-out RSVP lists.",
+      accent: "bg-amber-500/[0.08] text-amber-600",
+    },
+    {
+      icon: GraduationCap,
+      role: "A Recruiter",
+      action: 'Create a custom "Why You\'d Love Us" page for top-tier talent.',
+      result: "Higher candidate interest.",
+      accent: "bg-emerald-500/[0.08] text-emerald-600",
+    },
+  ];
+
+  return (
+    <section className="py-24 lg:py-36 bg-card relative section-divider">
+      <div className="container mx-auto px-4 sm:px-6" ref={ref}>
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">Use Cases</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
+            Built for the way{" "}
+            <span className="text-gradient">you actually work.</span>
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            Personalized.page isn't a one-trick tool. Here's how different teams are using it to drive real results.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {useCases.map((uc, i) => (
+            <div
+              key={uc.role}
+              className={`bg-background rounded-xl border border-border/50 p-7 hover-lift transition-all duration-500 ${visible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: `${i * 0.1}s` }}
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className={`w-11 h-11 rounded-lg flex items-center justify-center shrink-0 ${uc.accent.split(" ")[0]}`}>
+                  <uc.icon className={`w-5 h-5 ${uc.accent.split(" ")[1]}`} />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-primary/70 uppercase tracking-widest mb-1">If you are…</p>
+                  <h3 className="font-semibold text-foreground text-lg">{uc.role}</h3>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                <span className="text-foreground/70 font-medium">Use Personalized.page to </span>
+                {uc.action}
+              </p>
+              <div className="flex items-center gap-2 pt-3 border-t border-border/40">
+                <ArrowRight className="w-3.5 h-3.5 text-primary" />
+                <span className="text-sm font-semibold text-foreground">{uc.result}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   SECTION — USE CASE STORIES
+   ═══════════════════════════════════════════════════════════════════ */
+const UseCaseStoriesSection = () => {
+  const { ref, visible } = useInView();
+
+  const stories = [
+    {
+      icon: HeartHandshake,
+      label: "Fundraising",
+      headline: "Donors don't give to organizations; they give to impact.",
+      description: "Show them the specific project they are funding with a page built just for them. Replace mass appeal with a personal connection that drives 40% higher retention.",
+      accent: "bg-rose-500/[0.08] text-rose-600",
+    },
+    {
+      icon: Ticket,
+      label: "Invitations",
+      headline: "Standard invites get lost in the noise.",
+      description: 'A personalized invitation says "You aren\'t just a seat in the room—you\'re the reason for the event." Turn every guest into a VIP.',
+      accent: "bg-amber-500/[0.08] text-amber-600",
+    },
+    {
+      icon: UserCheck,
+      label: "Customer Success",
+      headline: "Turn a support ticket into a 'Thank You' moment.",
+      description: "Greet your customers with a custom portal that remembers their history. Transform transactional touchpoints into loyalty-building experiences.",
+      accent: "bg-emerald-500/[0.08] text-emerald-600",
+    },
+  ];
+
+  return (
+    <section className="py-24 lg:py-36 bg-background relative overflow-hidden">
+      {/* Subtle accent */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">Beyond Sales</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
+            One tool.{" "}
+            <span className="text-gradient">Every touchpoint.</span>
+          </h2>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {stories.map((story, i) => (
+            <div
+              key={story.label}
+              className={`relative transition-all duration-500 ${visible ? "animate-fade-up" : "opacity-0"}`}
+              style={{ animationDelay: `${i * 0.12}s` }}
+            >
+              <div className="bg-card rounded-xl border border-border/50 p-7 h-full hover-lift">
+                <div className={`w-11 h-11 rounded-lg flex items-center justify-center mb-5 ${story.accent.split(" ")[0]}`}>
+                  <story.icon className={`w-5 h-5 ${story.accent.split(" ")[1]}`} />
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-widest mb-3 text-muted-foreground/60">{story.label}</p>
+                <h3 className="font-semibold text-foreground text-lg mb-3 leading-snug">{story.headline}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{story.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════
    SECTION 6 — FINAL CTA + BETA SIGNUP
    ═══════════════════════════════════════════════════════════════════ */
 const FinalCTASection = () => {
@@ -720,6 +874,8 @@ const HomePage = () => {
       <HeroSection />
       <WhyPersonalizeSection />
       <WorkflowSections />
+      <UseCaseGridSection />
+      <UseCaseStoriesSection />
       <GuideTriggerSection onOpen={() => setGuideOpen(true)} />
       <CustomizationGridSection />
       <FinalCTASection />
