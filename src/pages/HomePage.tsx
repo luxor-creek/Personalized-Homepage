@@ -5,6 +5,10 @@ import { Input } from "@/components/ui/input";
 import BrandLogo from "@/components/BrandLogo";
 import snovioLogo from "@/assets/snovio.svg";
 import mailchimpLogo from "@/assets/mailchimp.svg";
+import stepDesignImg from "@/assets/step-design.png";
+import stepSyncImg from "@/assets/step-sync.png";
+import stepLaunchImg from "@/assets/step-launch.png";
+import stepMonitorImg from "@/assets/step-monitor.jpeg";
 import {
   ArrowRight,
   ArrowDown,
@@ -20,6 +24,7 @@ import {
   MessageSquare,
   BarChart3,
   MousePointerClick,
+  Eye,
   X,
   ShieldCheck,
   Layers,
@@ -241,50 +246,87 @@ const WhyPersonalizeSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════
-   SECTION 3 — INTEGRATION POWER-HOUSE
+   SECTION 3 — HOW IT WORKS (4 alternating feature sections)
    ═══════════════════════════════════════════════════════════════════ */
-const IntegrationSection = () => {
-  const { ref, visible } = useInView();
 
-  const steps = [
-    {
-      num: "01",
-      icon: Link2,
-      title: "Sync",
-      description: "Connect your Mailchimp or Snov.io account with one click. We securely pull your contact fields.",
-    },
-    {
-      num: "02",
-      icon: Paintbrush,
-      title: "Design",
-      description: "Build one template. Our engine generates thousands of unique variations—each one tailored to a lead.",
-    },
-    {
-      num: "03",
-      icon: Rocket,
-      title: "Launch",
-      description: "We push unique URLs back to your email list. Hit \"Send\" in your favorite tool and watch the clicks soar.",
-    },
-  ];
+interface WorkflowStepProps {
+  stepNum: string;
+  label: string;
+  title: React.ReactNode;
+  description: string;
+  image: string;
+  imageAlt: string;
+  reverse?: boolean;
+  bgClass?: string;
+  icon: React.ElementType;
+}
+
+const WorkflowStep = ({ stepNum, label, title, description, image, imageAlt, reverse = false, bgClass = "bg-background", icon: Icon }: WorkflowStepProps) => {
+  const { ref, visible } = useInView(0.1);
 
   return (
-    <section className="py-24 lg:py-36 bg-background relative noise-overlay overflow-hidden">
-      {/* Subtle accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-3xl pointer-events-none" />
+    <section className={`py-20 lg:py-28 ${bgClass} relative overflow-hidden`}>
+      <div className="container mx-auto px-4 sm:px-6" ref={ref}>
+        <div className={`grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ${reverse ? "lg:direction-rtl" : ""}`}>
+          {/* Text side */}
+          <div className={`${reverse ? "lg:order-2" : ""} max-w-lg ${reverse ? "lg:ml-auto" : ""}`}>
+            <div
+              className={`transition-all duration-700 ${visible ? "animate-fade-up" : "opacity-0"}`}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className="text-4xl font-display text-primary/15">{stepNum}</span>
+                <div className="w-10 h-10 rounded-lg bg-primary/[0.08] flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-primary" />
+                </div>
+                <span className="text-xs font-semibold text-primary/80 uppercase tracking-widest">{label}</span>
+              </div>
+              <h2 className="font-display text-3xl md:text-4xl lg:text-[2.5rem] text-foreground leading-[1.15] mb-5">
+                {title}
+              </h2>
+              <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                {description}
+              </p>
+            </div>
+          </div>
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">Workflow</p>
+          {/* Image side */}
+          <div className={`${reverse ? "lg:order-1" : ""}`}>
+            <div
+              className={`transition-all duration-700 delay-150 ${visible ? "animate-fade-up" : "opacity-0"}`}
+            >
+              <div className="rounded-xl overflow-hidden shadow-premium border border-border/40">
+                <img
+                  src={image}
+                  alt={imageAlt}
+                  className="w-full h-auto block"
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const WorkflowSections = () => (
+  <>
+    {/* Section header */}
+    <section className="pt-24 lg:pt-36 pb-8 bg-background relative">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">How It Works</p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
             Your Favorite Tools,{" "}
             <span className="text-gradient">Now Supercharged.</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            We don't just make pages—we enhance your existing data. Personalized.page lives where your leads do.
+            Personalization is no longer a luxury. Now, it's automatic. Four steps from data to delivered.
           </p>
 
           {/* Integration logos */}
-          <div className="flex items-center justify-center gap-8 mt-10">
+          <div className="flex items-center justify-center gap-6 mt-10">
             <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-5 py-3 shadow-sm hover-lift">
               <img src={mailchimpLogo} alt="Mailchimp" className="h-7" />
               <span className="text-sm font-medium text-foreground">Mailchimp</span>
@@ -295,87 +337,60 @@ const IntegrationSection = () => {
             </div>
           </div>
         </div>
-
-        {/* Workflow steps */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {steps.map((step, i) => (
-            <div
-              key={step.title}
-              className={`relative transition-all duration-500 ${visible ? "animate-fade-up" : "opacity-0"}`}
-              style={{ animationDelay: `${i * 0.14}s` }}
-            >
-              <div className="bg-card rounded-xl border border-border/50 p-7 h-full hover-lift">
-                <div className="flex items-center gap-3 mb-5">
-                  <span className="text-3xl font-display text-primary/20">{step.num}</span>
-                  <div className="w-10 h-10 rounded-lg bg-primary/[0.08] flex items-center justify-center">
-                    <step.icon className="w-5 h-5 text-primary" />
-                  </div>
-                </div>
-                <h3 className="font-semibold text-foreground text-lg mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
-              </div>
-
-              {/* Connector arrow (between cards on desktop) */}
-              {i < steps.length - 1 && (
-                <div className="hidden md:flex absolute top-1/2 -right-5 -translate-y-1/2 z-10 text-border">
-                  <ChevronRight className="w-5 h-5" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Dashboard Preview (mock) */}
-        <div
-          className={`mt-16 max-w-3xl mx-auto transition-all duration-700 ${visible ? "animate-fade-up" : "opacity-0"}`}
-          style={{ animationDelay: "0.5s" }}
-        >
-          <div className="bg-card rounded-xl border border-border/50 shadow-premium overflow-hidden">
-            {/* Title bar */}
-            <div className="px-5 py-3 bg-muted/50 border-b border-border/50 flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-border" />
-              <div className="w-2.5 h-2.5 rounded-full bg-border" />
-              <div className="w-2.5 h-2.5 rounded-full bg-border" />
-              <span className="text-[10px] text-muted-foreground/50 ml-3 font-mono">Mailchimp — Audience List</span>
-            </div>
-            {/* Mock table */}
-            <div className="p-4 overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="text-muted-foreground/60 uppercase tracking-wider text-left">
-                    <th className="pb-3 px-3 font-medium">Name</th>
-                    <th className="pb-3 px-3 font-medium">Company</th>
-                    <th className="pb-3 px-3 font-medium">Email</th>
-                    <th className="pb-3 px-3 font-medium text-primary">Personalized_URL</th>
-                  </tr>
-                </thead>
-                <tbody className="text-foreground/80">
-                  {[
-                    { name: "Sarah Jones", company: "Acme Corp", email: "sarah@acme.co", slug: "sarah-jones" },
-                    { name: "Marcus Chen", company: "Vortex AI", email: "marcus@vortex.ai", slug: "marcus-chen" },
-                    { name: "Priya Patel", company: "GreenLeaf", email: "priya@greenleaf.io", slug: "priya-patel" },
-                    { name: "James Wilson", company: "BrightEdge", email: "james@brightedge.com", slug: "james-wilson" },
-                  ].map((row) => (
-                    <tr key={row.slug} className="border-t border-border/30 hover:bg-muted/30 transition-colors">
-                      <td className="py-2.5 px-3 font-medium">{row.name}</td>
-                      <td className="py-2.5 px-3">{row.company}</td>
-                      <td className="py-2.5 px-3 text-muted-foreground">{row.email}</td>
-                      <td className="py-2.5 px-3">
-                        <code className="text-primary bg-primary/[0.06] px-2 py-0.5 rounded text-[11px]">
-                          personalized.page/u/{row.slug}
-                        </code>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
-  );
-};
+
+    {/* Step 1: Design */}
+    <WorkflowStep
+      stepNum="01"
+      label="Design"
+      icon={Paintbrush}
+      title={<>Build one template. <span className="text-gradient">Generate thousands.</span></>}
+      description="Pick a conversion-optimized layout or start from scratch. Drag-and-drop personalization tags like {{first_name}} and {{company}} into your headers, images, and CTAs. One template, infinite unique variations."
+      image={stepDesignImg}
+      imageAlt="Page builder with personalization variables and section editing"
+      bgClass="bg-background"
+    />
+
+    {/* Step 2: Sync */}
+    <WorkflowStep
+      stepNum="02"
+      label="Sync"
+      icon={Link2}
+      title={<>Connect your audience <span className="text-gradient">in one click.</span></>}
+      description="Import contacts from Mailchimp, Snov.io, CSV, Google Sheets, or add them manually. We securely pull your contact fields—Name, Company, Industry—and map them to your template variables."
+      image={stepSyncImg}
+      imageAlt="Add Contacts panel showing CSV upload, Google Sheets, Snov.io and Mailchimp imports"
+      reverse
+      bgClass="bg-card"
+    />
+
+    {/* Step 3: Launch */}
+    <WorkflowStep
+      stepNum="03"
+      label="Launch"
+      icon={Rocket}
+      title={<>Every lead gets <span className="text-gradient">their own page.</span></>}
+      description="Hit generate and we create a unique landing page for every contact—each with its own URL. Copy links, export as CSV, or push them straight back to your email tool. Hit 'Send' and watch the clicks soar."
+      image={stepLaunchImg}
+      imageAlt="Campaign dashboard showing contacts with personalized landing page links and live status"
+      bgClass="bg-background"
+    />
+
+    {/* Step 4: Monitor */}
+    <WorkflowStep
+      stepNum="04"
+      label="Monitor"
+      icon={Eye}
+      title={<>Track every view, click, and <span className="text-gradient">conversion.</span></>}
+      description="See who's engaging in real time. Page views, video plays, link clicks, average time on page, scroll depth, and return visits—all at the per-prospect level. Know exactly which leads are hot."
+      image={stepMonitorImg}
+      imageAlt="Campaign analytics showing per-prospect engagement stats including views, clicks, and scroll depth"
+      reverse
+      bgClass="bg-card"
+    />
+  </>
+);
 
 /* ═══════════════════════════════════════════════════════════════════
    SECTION 4 — INTEGRATION GUIDE (Slide-out)
@@ -704,7 +719,7 @@ const HomePage = () => {
     <div className="min-h-screen bg-background">
       <HeroSection />
       <WhyPersonalizeSection />
-      <IntegrationSection />
+      <WorkflowSections />
       <GuideTriggerSection onOpen={() => setGuideOpen(true)} />
       <CustomizationGridSection />
       <FinalCTASection />
