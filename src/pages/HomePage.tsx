@@ -216,7 +216,7 @@ const MissionsShowcaseSection = () => {
             <span className="text-gradient">Personalize to Thousands.</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Whether you are a non-profit, an HR director, or a sales leader—Personalized.page builds hyper-personalized pages that convert outreach into meetings and deals.
+            Personalized.page builds hyper-personalized pages that convert outreach into meetings and deals.
           </p>
         </div>
 
