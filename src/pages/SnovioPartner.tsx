@@ -62,9 +62,9 @@ const Hero = () => {
         {/* Nav */}
         <header className="flex items-center justify-between gap-4 mb-20 lg:mb-28 animate-fade-up">
           <div className="flex items-center gap-3 shrink-0">
-            <BrandLogo className="h-7 sm:h-8" />
+            <BrandLogo className="h-9 sm:h-11" />
             <span className="text-muted-foreground/40 text-sm">×</span>
-            <img src={snovioLogo} alt="Snov.io" className="h-5 sm:h-6" />
+            <img src={snovioLogo} alt="Snov.io" className="h-7 sm:h-9" />
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <Button variant="ghost" size="sm" onClick={() => navigate("/auth")} className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
@@ -360,7 +360,7 @@ const ShowcaseSection = () => {
         </div>
 
         <div className={`max-w-5xl mx-auto transition-all duration-700 delay-200 ${visible ? "animate-fade-up" : "opacity-0"}`}>
-          <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40">
+          <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40 bw-to-color">
             <img
               src={missionsShowcaseImg}
               alt="Examples of personalized pages for different use cases"

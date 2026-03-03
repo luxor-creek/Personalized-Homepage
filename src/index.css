@@ -199,3 +199,12 @@
     border-radius: 1px;
   }
 }
+
+/* Black & white to color hover reveal */
+.bw-to-color {
+  filter: grayscale(100%);
+  transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bw-to-color:hover {
+  filter: grayscale(0%);
+}

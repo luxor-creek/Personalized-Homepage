@@ -224,7 +224,7 @@ const MissionsShowcaseSection = () => {
         <div
           className={`max-w-5xl mx-auto transition-all duration-700 delay-200 ${visible ? "animate-fade-up" : "opacity-0"}`}
         >
-          <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40">
+          <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40 bw-to-color">
             <img
               src={missionsShowcaseImg}
               alt="Six personalized page examples: nonprofit donation reports, VIP executive invitations, corporate onboarding portals, milestone celebrations, support ticket responses, and exclusive event access"
