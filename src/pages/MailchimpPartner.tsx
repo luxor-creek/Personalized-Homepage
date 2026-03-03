@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BrandLogo from "@/components/BrandLogo";
+import BetaSignupForm from "@/components/BetaSignupForm";
 import mailchimpLogo from "@/assets/mailchimp.svg";
 import stepDesignImg from "@/assets/step-design.png";
 import stepSyncImg from "@/assets/step-sync.png";
@@ -621,14 +622,6 @@ const ObjectionSection = () => {
    FINAL CTA
    ═══════════════════════════════════════════════════════════════════ */
 const FinalCTA = () => {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = () => {
-    if (!email) return;
-    setSubmitted(true);
-  };
-
   return (
     <section id="mailchimp-cta" className="py-24 lg:py-32 relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -651,38 +644,7 @@ const FinalCTA = () => {
             Connect your Mailchimp account, pick an audience, launch personalized pages in minutes. Free while we're in beta.
           </p>
 
-          {submitted ? (
-            <div className="bg-primary/[0.06] border border-primary/20 rounded-xl px-6 py-8">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground text-lg mb-2">You're in.</h3>
-              <p className="text-sm text-muted-foreground">We'll send your early access invite within 24 hours. Check your inbox.</p>
-            </div>
-          ) : (
-            <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-premium max-w-md mx-auto">
-              <div className="space-y-4">
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Your work email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-background border border-border rounded-lg px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40 transition-all"
-                  />
-                </div>
-                <Button
-                  variant="hero"
-                  size="xl"
-                  className="w-full hover-lift mt-2"
-                  onClick={handleSubmit}
-                >
-                  Get Early Access
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          )}
+          <BetaSignupForm source="mailchimp" defaultTool="Mailchimp" />
         </div>
       </div>
     </section>

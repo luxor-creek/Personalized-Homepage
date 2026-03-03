@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import BetaSignupForm from "@/components/BetaSignupForm";
 import BrandLogo from "@/components/BrandLogo";
 import snovioLogo from "@/assets/snovio.svg";
 import mailchimpLogo from "@/assets/mailchimp.svg";
@@ -803,21 +804,10 @@ const UseCaseStoriesSection = () => {
    SECTION 6 — FINAL CTA + BETA SIGNUP
    ═══════════════════════════════════════════════════════════════════ */
 const FinalCTASection = () => {
-  const [email, setEmail] = useState("");
-  const [tool, setTool] = useState("");
-  const [submitted, setSubmitted] = useState(false);
   const { ref, visible } = useInView();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    // TODO: wire up to Supabase / email capture
-    setSubmitted(true);
-  };
 
   return (
     <section id="beta-signup" className="py-24 lg:py-36 hero-gradient noise-overlay relative overflow-hidden">
-      {/* Accent orbs */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/[0.03] blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
@@ -833,62 +823,7 @@ const FinalCTASection = () => {
             Join our Beta today and start sending pages that actually resonate. It's free while we're in beta.
           </p>
 
-          {submitted ? (
-            <div className="bg-primary/[0.06] border border-primary/20 rounded-xl px-6 py-8">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground text-lg mb-2">You're on the list!</h3>
-              <p className="text-sm text-muted-foreground">We'll reach out soon with your early access invite.</p>
-            </div>
-          ) : (
-            <div className="bg-card border border-border/50 rounded-2xl p-6 sm:p-8 shadow-premium max-w-md mx-auto">
-              <div className="space-y-4">
-                <div className="text-left">
-                  <label className="text-xs font-medium text-foreground/80 uppercase tracking-wider mb-1.5 block">
-                    Business Email
-                  </label>
-                  <Input
-                    type="email"
-                    placeholder="you@company.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-11"
-                  />
-                </div>
-                <div className="text-left">
-                  <label className="text-xs font-medium text-foreground/80 uppercase tracking-wider mb-1.5 block">
-                    Primary Tool
-                  </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {["Mailchimp", "Snov.io", "Other"].map((opt) => (
-                      <button
-                        key={opt}
-                        type="button"
-                        onClick={() => setTool(opt)}
-                        className={`text-sm py-2.5 px-3 rounded-lg border transition-all duration-200 ${
-                          tool === opt
-                            ? "border-primary bg-primary/[0.06] text-primary font-medium"
-                            : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
-                        }`}
-                      >
-                        {opt}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <Button
-                  variant="hero"
-                  size="xl"
-                  className="w-full hover-lift mt-2"
-                  onClick={handleSubmit}
-                >
-                  Get Early Access
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </div>
-            </div>
-          )}
+          <BetaSignupForm source="homepage" showToolSelector />
         </div>
       </div>
     </section>

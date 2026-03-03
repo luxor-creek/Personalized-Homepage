@@ -134,10 +134,15 @@ const AdminDashboard = () => {
   const [betaEmailBody, setBetaEmailBody] = useState("");
   const [sendingBetaEmail, setSendingBetaEmail] = useState(false);
 
+  // Beta signups
+  const [betaSignups, setBetaSignups] = useState<any[]>([]);
+  const [betaSignupCount, setBetaSignupCount] = useState(0);
+
   useEffect(() => {
     if (user && isAdmin) {
       fetchUsers();
       fetchInfoRequests();
+      fetchBetaSignups();
     }
   }, [user, isAdmin]);
 
@@ -215,6 +220,31 @@ const AdminDashboard = () => {
       setInfoRequestCount(count || 0);
     } catch (error: any) {
       console.error("Error fetching info requests:", error.message);
+    }
+  };
+
+  const fetchBetaSignups = async () => {
+    try {
+      const { data, error, count } = await (supabase as any)
+        .from("beta_signups")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setBetaSignups(data || []);
+      setBetaSignupCount(count || 0);
+    } catch (error: any) {
+      console.error("Error fetching beta signups:", error.message);
+    }
+  };
+
+  const deleteBetaSignup = async (id: string) => {
+    try {
+      const { error } = await (supabase as any).from("beta_signups").delete().eq("id", id);
+      if (error) throw error;
+      fetchBetaSignups();
+      toast({ title: "Signup removed" });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     }
   };
 
@@ -630,6 +660,7 @@ const AdminDashboard = () => {
               Beta Questions {infoRequestCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary/20 text-primary">{infoRequestCount}</span>}
             </TabsTrigger>
             <TabsTrigger value="form-submissions"><FileText className="w-4 h-4 mr-2" />Form Submissions</TabsTrigger>
+            <TabsTrigger value="beta-users"><UserPlus className="w-4 h-4 mr-2" />Beta Signups {betaSignupCount > 0 && <span className="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-bold bg-primary/20 text-primary">{betaSignupCount}</span>}</TabsTrigger>
             <TabsTrigger value="integrations"><Plug className="w-4 h-4 mr-2" />Integrations</TabsTrigger>
           </TabsList>
 
@@ -867,6 +898,60 @@ const AdminDashboard = () => {
               <p className="text-muted-foreground mb-6">View all form submissions from your landing pages.</p>
             </div>
             <FormSubmissionsPanel />
+          </TabsContent>
+
+          {/* Beta Signups Tab */}
+          <TabsContent value="beta-users" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Beta Signups</h2>
+              <p className="text-muted-foreground mb-6">People who signed up via the homepage, Snov.io, or Mailchimp partner pages. {betaSignupCount} total.</p>
+            </div>
+            {betaSignups.length === 0 ? (
+              <div className="text-center py-12 text-muted-foreground">No beta signups yet.</div>
+            ) : (
+              <div className="bg-card rounded-lg border border-border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Company</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Source</TableHead>
+                      <TableHead>Tool</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {betaSignups.map((signup: any) => (
+                      <TableRow key={signup.id}>
+                        <TableCell className="font-medium">{signup.first_name} {signup.last_name}</TableCell>
+                        <TableCell>{signup.company}</TableCell>
+                        <TableCell>
+                          <a href={`mailto:${signup.email}`} className="text-primary hover:underline">{signup.email}</a>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{signup.phone || "—"}</TableCell>
+                        <TableCell>
+                          <Badge variant={signup.source === "snovio" ? "default" : signup.source === "mailchimp" ? "secondary" : "outline"}>
+                            {signup.source === "snovio" ? "Snov.io" : signup.source === "mailchimp" ? "Mailchimp" : "Homepage"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{signup.tool || "—"}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">
+                          {new Date(signup.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm" onClick={() => deleteBetaSignup(signup.id)}>
+                            <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </TabsContent>
 
           {/* Integrations Tab */}
