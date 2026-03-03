@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import PersonalizedLanding from "./pages/PersonalizedLanding";
+import HomePage from "./pages/HomePage";
 
 import TemplateEditor from "./pages/TemplateEditor";
 import WineVideoTemplate from "./pages/WineVideoTemplate";
@@ -27,7 +28,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Admin />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/police-recruitment" element={<Index />} />
           <Route path="/wine-video-landing" element={<WineVideoTemplate />} />
           <Route path="/admin" element={<Admin />} />
