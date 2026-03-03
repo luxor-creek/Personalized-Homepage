@@ -9,6 +9,7 @@ import stepDesignImg from "@/assets/step-design.png";
 import stepSyncImg from "@/assets/step-sync.png";
 import stepLaunchImg from "@/assets/step-launch.png";
 import stepMonitorImg from "@/assets/step-monitor.jpeg";
+import missionsShowcaseImg from "@/assets/missions-showcase.png";
 import {
   ArrowRight,
   ArrowDown,
@@ -191,6 +192,45 @@ const HeroSection = () => {
           >
             <ArrowDown className="w-4 h-4 animate-bounce" />
           </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════════
+   SECTION 1B — MISSIONS SHOWCASE (the "wow")
+   ═══════════════════════════════════════════════════════════════════ */
+const MissionsShowcaseSection = () => {
+  const { ref, visible } = useInView(0.08);
+
+  return (
+    <section className="py-20 lg:py-28 bg-card relative overflow-hidden">
+      <div className="container mx-auto px-4 sm:px-6" ref={ref}>
+        <div
+          className={`max-w-3xl mx-auto text-center mb-12 lg:mb-16 transition-all duration-700 ${visible ? "animate-fade-up" : "opacity-0"}`}
+        >
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">See It In Action</p>
+          <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
+            One Template.{" "}
+            <span className="text-gradient">Infinite Missions.</span>
+          </h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            Whether you are a non-profit, an HR director, or a sales leader—Personalized.page adapts to your goals in real-time.
+          </p>
+        </div>
+
+        <div
+          className={`max-w-5xl mx-auto transition-all duration-700 delay-200 ${visible ? "animate-fade-up" : "opacity-0"}`}
+        >
+          <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40">
+            <img
+              src={missionsShowcaseImg}
+              alt="Six personalized page examples: nonprofit donation reports, VIP executive invitations, corporate onboarding portals, milestone celebrations, support ticket responses, and exclusive event access"
+              className="w-full h-auto block"
+              loading="lazy"
+            />
+          </div>
         </div>
       </div>
     </section>
@@ -878,6 +918,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <HeroSection />
+      <MissionsShowcaseSection />
       <WhyPersonalizeSection />
       <WorkflowSections />
       <UseCaseGridSection />
