@@ -435,7 +435,7 @@ const IntegrationGuideSlideout = ({
       icon: Rocket,
       title: "Send the Campaign",
       description:
-        "In your email builder, use the merge tag *|PPAGE|*. Every recipient gets their own custom destination.",
+        "In your email builder, use the merge tag *|PPAGE|* in Mailchimp or the corresponding Snov.io variable. Every recipient gets their own custom destination.",
     },
   ];
 
