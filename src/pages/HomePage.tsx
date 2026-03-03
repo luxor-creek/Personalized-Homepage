@@ -212,11 +212,11 @@ const MissionsShowcaseSection = () => {
         >
           <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">See It In Action</p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
-            One Template.{" "}
-            <span className="text-gradient">Infinite Missions.</span>
+            Pick a Template.{" "}
+            <span className="text-gradient">Personalize to Thousands.</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-            Whether you are a non-profit, an HR director, or a sales leader—Personalized.page adapts to your goals in real-time.
+            Whether you are a non-profit, an HR director, or a sales leader—Personalized.page builds hyper-personalized pages that convert outreach into meetings and deals.
           </p>
         </div>
 
