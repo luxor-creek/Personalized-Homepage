@@ -10,6 +10,7 @@ import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 import PersonalizedLanding from "./pages/PersonalizedLanding";
 import HomePage from "./pages/HomePage";
+import SnovioPartner from "./pages/SnovioPartner";
 
 import TemplateEditor from "./pages/TemplateEditor";
 import WineVideoTemplate from "./pages/WineVideoTemplate";
@@ -29,6 +30,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/snovio" element={<SnovioPartner />} />
           <Route path="/police-recruitment" element={<Index />} />
           <Route path="/wine-video-landing" element={<WineVideoTemplate />} />
           <Route path="/admin" element={<Admin />} />
