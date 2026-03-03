@@ -73,14 +73,20 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 sm:px-6 py-14 lg:py-20 relative z-10 w-full">
         {/* Nav */}
-        <header className="flex items-center justify-between mb-20 lg:mb-28 animate-fade-up">
-          <BrandLogo className="h-8" />
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")} className="text-muted-foreground hover:text-foreground">
+        <header className="flex items-center justify-between gap-4 mb-20 lg:mb-28 animate-fade-up">
+          <BrandLogo className="h-7 sm:h-8 shrink-0" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/auth")} className="text-muted-foreground hover:text-foreground hidden sm:inline-flex">
               Log in
             </Button>
-            <Button variant="hero" size="lg" onClick={() => document.getElementById("beta-signup")?.scrollIntoView({ behavior: "smooth" })}>
-              Join the Beta
+            <Button
+              variant="hero"
+              size="sm"
+              onClick={() => document.getElementById("beta-signup")?.scrollIntoView({ behavior: "smooth" })}
+              className="sm:h-12 sm:px-6 sm:text-base"
+            >
+              <span className="sm:hidden">Join Beta</span>
+              <span className="hidden sm:inline">Join the Beta</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           </div>
@@ -104,25 +110,25 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-3 animate-fade-up-delay-3">
               <Button
                 variant="hero"
-                size="xl"
+                size="lg"
                 onClick={() => document.getElementById("beta-signup")?.scrollIntoView({ behavior: "smooth" })}
-                className="hover-lift"
+                className="hover-lift sm:h-14 sm:px-10 sm:text-base"
               >
                 Join the Beta — It's Free
                 <ArrowRight className="w-5 h-5" />
               </Button>
               <Button
                 variant="heroOutline"
-                size="xl"
+                size="lg"
                 onClick={() => document.getElementById("why-personalize")?.scrollIntoView({ behavior: "smooth" })}
-                className="hover-lift"
+                className="hover-lift sm:h-14 sm:px-10 sm:text-base"
               >
                 See How It Works
               </Button>
             </div>
 
             {/* Integration logos inline */}
-            <div className="flex items-center gap-5 mt-10 animate-fade-up-delay-3">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-5 mt-10 animate-fade-up-delay-3">
               <span className="text-xs text-muted-foreground/60 uppercase tracking-widest font-medium">Integrates with</span>
               <img src={mailchimpLogo} alt="Mailchimp" className="h-6 opacity-60 hover:opacity-100 transition-opacity" />
               <img src={snovioLogo} alt="Snov.io" className="h-5 opacity-60 hover:opacity-100 transition-opacity" />
