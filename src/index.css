@@ -72,9 +72,9 @@
 @layer utilities {
   /* ---- Typography ---- */
   .font-display {
-    font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
-    letter-spacing: -0.02em;
-    font-weight: 400;
+    font-family: "Plus Jakarta Sans", "DM Sans", "Helvetica Neue", sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 700;
   }
 
   .text-gradient {
