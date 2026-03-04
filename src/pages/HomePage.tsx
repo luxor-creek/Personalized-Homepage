@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import BetaSignupForm from "@/components/BetaSignupForm";
@@ -213,7 +213,7 @@ const MissionsShowcaseSection = () => {
         >
           <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">See It In Action</p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
-            Pick a Template.{" "}
+            Create a Template.{" "}
             <span className="text-gradient">Personalize to Thousands.</span>
           </h2>
           <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
@@ -378,14 +378,14 @@ const WorkflowSections = () => (
 
           {/* Integration logos */}
           <div className="flex items-center justify-center gap-6 mt-10">
-            <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-5 py-3 shadow-sm hover-lift">
+            <Link to="/mailchimp" className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-5 py-3 shadow-sm hover-lift no-underline">
               <img src={mailchimpLogo} alt="Mailchimp" className="h-7" />
               <span className="text-sm font-medium text-foreground">Mailchimp</span>
-            </div>
-            <div className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-5 py-3 shadow-sm hover-lift">
+            </Link>
+            <Link to="/snovio" className="flex items-center gap-3 bg-card border border-border/50 rounded-xl px-5 py-3 shadow-sm hover-lift no-underline">
               <img src={snovioLogo} alt="Snov.io" className="h-6" />
               <span className="text-sm font-medium text-foreground">Snov.io</span>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
