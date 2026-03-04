@@ -103,11 +103,11 @@ const HeroSection = () => {
               Beta Now Open
             </div>
             <h1 className="font-display text-4xl md:text-5xl lg:text-[3.4rem] xl:text-[3.75rem] text-foreground leading-[1.08] mb-6 animate-fade-up-delay">
-              Make every digital interaction feel like a{" "}
-              <span className="text-gradient">1-to-1 conversation.</span>
+              Turn Your Email List Into Thousands of{" "}
+              <span className="text-gradient">Personalized Landing Pages.</span>
             </h1>
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-9 animate-fade-up-delay-2">
-              Whether you're booking sales demos, hitting fundraising goals, or inviting VIPs to an exclusive event—Personalized.page turns your generic email list into a series of custom, high-impact experiences.
+              Stop sending leads to a generic homepage. Personalized.page crafts a unique 1-to-1 experience for every contact, featuring their own name, company logo, and tailored content to drive action.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 animate-fade-up-delay-3">
               <Button
