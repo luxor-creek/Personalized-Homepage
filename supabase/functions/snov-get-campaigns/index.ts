@@ -8,6 +8,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonResponse = (body: unknown) =>
+  new Response(JSON.stringify(body), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -16,31 +19,37 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const authHeader = req.headers.get("Authorization") || "";
     if (!authHeader.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Missing authorization header" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return jsonResponse({ success: false, error: "Not authenticated. Please log in again." });
     }
 
-    const jwt = authHeader.replace("Bearer ", "").trim();
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(jwt);
-    if (claimsError || !claimsData?.claims?.sub) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return jsonResponse({ success: false, error: "Session expired. Please log in again." });
     }
 
-    const userId = claimsData.claims.sub as string;
+    const userId = user.id;
     console.log(`Fetching Snov.io campaigns for user ${userId}...`);
 
-    const { clientId, clientSecret } = await getSnovCredentials(supabase, userId);
+    let clientId: string, clientSecret: string;
+    try {
+      ({ clientId, clientSecret } = await getSnovCredentials(supabase, userId));
+    } catch (e: any) {
+      if (e.message === "SNOV_NOT_CONFIGURED") {
+        return jsonResponse({
+          success: false,
+          error: "Snov.io is not connected. Go to Settings \u2192 Integrations to add your Snov.io API credentials.",
+          code: "SNOV_NOT_CONFIGURED",
+        });
+      }
+      throw e;
+    }
+
     const accessToken = await getSnovAccessToken(clientId, clientSecret);
 
     const params = new URLSearchParams();
@@ -51,10 +60,10 @@ const handler = async (req: Request): Promise<Response> => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Failed to fetch campaigns:", errorText);
-      return new Response(
-        JSON.stringify({ success: false, error: `Failed to fetch Snov.io campaigns: ${errorText}` }),
-        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return jsonResponse({
+        success: false,
+        error: `Snov.io API error: ${response.status}. Could not retrieve campaigns.`,
+      });
     }
 
     const campaignsArray = await response.json();
@@ -71,17 +80,10 @@ const handler = async (req: Request): Promise<Response> => {
         }))
       : [];
 
-    return new Response(
-      JSON.stringify({ success: true, campaigns: formattedCampaigns }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ success: true, campaigns: formattedCampaigns });
+  } catch (error: any) {
     console.error("Error in snov-get-campaigns:", error);
-    return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({ success: false, error: error.message || "An unexpected error occurred" });
   }
 };
 

@@ -49,19 +49,16 @@ const AboutSection = ({
   const renderTitle = () => renderFormattedText(title);
 
   return (
-    <section id="about" className="py-20 lg:py-32 bg-card relative">
-      {/* Accent line */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-primary rounded-full" />
-
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+    <section id="about" className="py-24 lg:py-36 bg-card relative section-divider">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto text-center mb-14">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground mb-6 leading-[1.15]">
             {renderTitle()}
           </h2>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+        <div className="max-w-2xl mx-auto">
+          <div className="space-y-7 text-base md:text-lg text-muted-foreground leading-[1.75]">
             {parsedContent.map((para) => (
               <p key={para.key}>
                 {para.lines.map((line, i) => (

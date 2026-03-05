@@ -2,47 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Using Helvetica Neue / Helvetica system fonts */
-
 @layer base {
   :root {
-    /* Clean light theme with purple accents */
+    /* Clean light theme — refined palette */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 228 20% 12%;
 
-    --card: 0 0% 98%;
-    --card-foreground: 222 47% 11%;
+    --card: 230 20% 98%;
+    --card-foreground: 228 20% 12%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 228 20% 12%;
 
-    /* Purple accent */
-    --primary: 252 64% 60%;
+    /* Purple accent — deeper & richer */
+    --primary: 252 60% 56%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 228 18% 96%;
+    --secondary-foreground: 228 20% 12%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 228 14% 95%;
+    --muted-foreground: 224 8% 48%;
 
-    --accent: 252 64% 60%;
+    --accent: 252 60% 56%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 252 64% 60%;
+    --border: 228 16% 90%;
+    --input: 228 16% 90%;
+    --ring: 252 60% 56%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
-    /* Custom tokens */
-    --hero-gradient: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 14% 96%) 100%);
-    --purple-glow: 0 0 40px hsl(var(--primary) / 0.3);
-    --card-glow: 0 4px 60px hsl(0 0% 0% / 0.08);
-    --text-gradient: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
+    /* Custom tokens — refined */
+    --hero-gradient: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(252 30% 98.5%) 60%, hsl(228 18% 96%) 100%);
+    --purple-glow: 0 0 40px hsl(var(--primary) / 0.25);
+    --card-glow: 0 8px 40px hsl(228 40% 10% / 0.06), 0 1px 3px hsl(228 40% 10% / 0.04);
+    --text-gradient: linear-gradient(135deg, hsl(252 60% 52%) 0%, hsl(280 55% 58%) 100%);
   }
 
   .dark {
@@ -58,15 +56,27 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: "DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.005em;
+    line-height: 1.65;
   }
 }
 
 @layer utilities {
+  /* ---- Typography ---- */
+  .font-display {
+    font-family: "Plus Jakarta Sans", "DM Sans", "Helvetica Neue", sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
   .text-gradient {
     background: var(--text-gradient);
     -webkit-background-clip: text;
@@ -78,6 +88,22 @@
     background: var(--hero-gradient);
   }
 
+  .noise-overlay {
+    position: relative;
+  }
+  .noise-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
   .purple-glow {
     box-shadow: var(--purple-glow);
   }
@@ -86,24 +112,33 @@
     box-shadow: var(--card-glow);
   }
 
+  .shadow-premium {
+    box-shadow: 0 1px 2px hsl(228 40% 10% / 0.04), 0 4px 16px hsl(228 40% 10% / 0.06), 0 12px 48px hsl(228 40% 10% / 0.04);
+  }
+
   .animate-fade-up {
-    animation: fadeUp 0.8s ease-out forwards;
+    animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   }
 
   .animate-fade-up-delay {
-    animation: fadeUp 0.8s ease-out 0.2s forwards;
+    animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
     opacity: 0;
   }
 
   .animate-fade-up-delay-2 {
-    animation: fadeUp 0.8s ease-out 0.4s forwards;
+    animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-up-delay-3 {
+    animation: fadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
     opacity: 0;
   }
 
   @keyframes fadeUp {
     from {
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(24px);
     }
     to {
       opacity: 1;
@@ -130,14 +165,46 @@
 
   @keyframes pulse-glow {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+      box-shadow: 0 0 20px hsl(var(--primary) / 0.3);
     }
     50% {
-      box-shadow: 0 0 40px hsl(var(--primary) / 0.6);
+      box-shadow: 0 0 40px hsl(var(--primary) / 0.5);
     }
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+    animation: pulse-glow 3s ease-in-out infinite;
   }
+
+  .hover-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px hsl(228 40% 10% / 0.1);
+  }
+
+  .section-divider {
+    position: relative;
+  }
+  .section-divider::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.5), transparent);
+    border-radius: 1px;
+  }
+}
+
+/* Black & white to color hover reveal */
+.bw-to-color {
+  filter: grayscale(100%);
+  transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bw-to-color:hover {
+  filter: grayscale(0%);
 }

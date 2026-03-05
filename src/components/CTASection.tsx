@@ -37,13 +37,13 @@ const CTASection = ({
   };
 
   return (
-    <section id="contact" className="py-20 lg:py-32 hero-gradient relative overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-3xl" />
+    <section id="contact" className="py-24 lg:py-36 hero-gradient noise-overlay relative overflow-hidden">
+      {/* Background accent — softened */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/[0.03] blur-3xl" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
+          <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground mb-7 leading-[1.15]">
             {renderTitle()}
           </h2>
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">

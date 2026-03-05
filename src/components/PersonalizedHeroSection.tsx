@@ -72,58 +72,58 @@ const PersonalizedHeroSection = ({
   };
 
   return (
-    <section className="min-h-screen hero-gradient relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
+    <section className="min-h-screen hero-gradient noise-overlay relative overflow-hidden">
+      {/* Refined radial accent */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div 
-          className="absolute inset-0" 
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--primary)) 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }}
+          className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full opacity-[0.04]"
+          style={{ background: `radial-gradient(circle, hsl(var(--primary)), transparent 70%)` }}
         />
       </div>
 
-      <div className="container mx-auto px-4 py-12 lg:py-20 relative z-10">
-        <header className="flex items-center justify-between mb-12 lg:mb-16 animate-fade-up">
+      <div className="container mx-auto px-4 sm:px-6 py-14 lg:py-24 relative z-10">
+        <header className="flex items-center justify-between mb-16 lg:mb-20 animate-fade-up">
           {logoUrl ? (
             <img src={logoUrl} alt="Logo" className="h-8 md:h-10 object-contain" />
           ) : (
             <div />
           )}
           {showHeaderCta && (
-          <Button variant="heroOutline" size="lg" onClick={scrollToContact}>
+          <Button variant="heroOutline" size="lg" onClick={scrollToContact} className="hover-lift">
             {ctaPrimaryText}
           </Button>
           )}
         </header>
 
-        <div className="max-w-5xl mx-auto text-center mb-12 lg:mb-16">
-          <p className="text-primary font-medium tracking-wider uppercase mb-4 animate-fade-up">
+        <div className="max-w-4xl mx-auto text-center mb-14 lg:mb-20">
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5 animate-fade-up">
             {renderFormattedText(getBadge())}
           </p>
-          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-fade-up-delay leading-tight">
+          <h1 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] xl:text-[4rem] text-foreground mb-7 animate-fade-up-delay leading-[1.1]">
             {renderFormattedText(getHeadline())}
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-up-delay-2">
+          <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-up-delay-2 leading-relaxed">
             {renderFormattedText(getSubheadline())}
           </p>
         </div>
 
         <div className="max-w-4xl mx-auto animate-fade-up-delay-2">
-          <VideoPlayer videoId={videoId} thumbnailUrl={thumbnailUrl} onVideoPlay={onVideoPlay} />
+          <div className="shadow-premium rounded-xl overflow-hidden">
+            <VideoPlayer videoId={videoId} thumbnailUrl={thumbnailUrl} onVideoPlay={onVideoPlay} />
+          </div>
         </div>
 
         {showCtaSecondary && (
-        <div className="flex justify-center mt-12 lg:mt-16 animate-fade-up-delay-2">
+        <div className="flex justify-center mt-14 lg:mt-20 animate-fade-up-delay-3">
           <button 
             onClick={() => {
               onLinkClick?.("Learn More CTA", "#about");
               document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
             }}
-            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors group"
+            className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors duration-300 group"
           >
-            <span className="text-sm uppercase tracking-wider">{ctaSecondaryText}</span>
-            <ArrowDown className="w-5 h-5 animate-bounce" />
+            <span className="text-xs uppercase tracking-widest font-medium">{ctaSecondaryText}</span>
+            <ArrowDown className="w-4 h-4 animate-bounce" />
           </button>
         </div>
         )}

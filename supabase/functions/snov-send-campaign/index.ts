@@ -8,6 +8,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonResponse = (body: unknown) =>
+  new Response(JSON.stringify(body), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
 interface SnovProspect {
   id: string;
   name: string;
@@ -46,7 +49,7 @@ async function getProspectsFromList(accessToken: string, listId: number): Promis
 
     if (!response.ok) {
       const error = await response.text();
-      throw new Error(`Failed to fetch prospects: ${error}`);
+      throw new Error(`Failed to fetch prospects (page ${page}): ${error}`);
     }
 
     const data = await response.json();
@@ -105,10 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const authHeader = req.headers.get("Authorization") || "";
     if (!authHeader.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Missing authorization" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return jsonResponse({ success: false, error: "Not authenticated. Please log in again." });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -119,47 +119,53 @@ const handler = async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const jwt = authHeader.replace("Bearer ", "").trim();
-    const { data: claimsData, error: claimsError } = await authClient.auth.getClaims(jwt);
-    if (claimsError || !claimsData?.claims?.sub) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const { data: { user }, error: userError } = await authClient.auth.getUser();
+    if (userError || !user) {
+      return jsonResponse({ success: false, error: "Session expired. Please log in again." });
     }
 
-    const userId = claimsData.claims.sub as string;
+    const userId = user.id;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { listId, campaignId, snovCampaignListId, templateId }: SendCampaignRequest = await req.json();
 
+    if (!listId || !campaignId || !snovCampaignListId) {
+      return jsonResponse({ success: false, error: "Missing required fields: listId, campaignId, or snovCampaignListId" });
+    }
+
+    // Verify campaign ownership
     const { data: campaignData, error: campaignError } = await supabase
       .from("campaigns")
       .select("user_id")
       .eq("id", campaignId)
       .single();
 
-    if (campaignError || !campaignData || campaignData.user_id !== userId) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Access denied" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (campaignError || !campaignData) {
+      return jsonResponse({ success: false, error: "Campaign not found. It may have been deleted." });
+    }
+    if (campaignData.user_id !== userId) {
+      return jsonResponse({ success: false, error: "You don't have access to this campaign." });
     }
 
-    if (!listId || !campaignId || !snovCampaignListId) {
-      throw new Error("Missing required fields");
+    let clientId: string, clientSecret: string;
+    try {
+      ({ clientId, clientSecret } = await getSnovCredentials(authClient, userId));
+    } catch (e: any) {
+      if (e.message === "SNOV_NOT_CONFIGURED") {
+        return jsonResponse({
+          success: false,
+          error: "Snov.io is not connected. Go to Settings \u2192 Integrations to add your Snov.io API credentials.",
+          code: "SNOV_NOT_CONFIGURED",
+        });
+      }
+      throw e;
     }
 
-    const { clientId, clientSecret } = await getSnovCredentials(authClient, userId);
     const accessToken = await getSnovAccessToken(clientId, clientSecret);
-
     const prospects = await getProspectsFromList(accessToken, listId);
 
     if (prospects.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, message: "No prospects found in list", sent: 0 }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return jsonResponse({ success: true, message: "No prospects found in the selected list.", added: 0, errors: 0, total: 0 });
     }
 
     const baseUrl = Deno.env.get("SITE_BASE_URL") || "https://video.kickervideo.com";
@@ -190,7 +196,6 @@ const handler = async (req: Request): Promise<Response> => {
 
         if (addResult.success) { addedCount++; results.push({ email: primaryEmail, success: true, pageUrl }); }
         else { errorCount++; results.push({ email: primaryEmail, success: false, pageUrl, error: addResult.error }); }
-        if (addResult.snov) (results[results.length - 1] as any).snov = addResult.snov;
 
         await new Promise(resolve => setTimeout(resolve, 300));
       } catch (error: unknown) {
@@ -200,17 +205,19 @@ const handler = async (req: Request): Promise<Response> => {
       }
     }
 
-    return new Response(
-      JSON.stringify({ success: true, message: `Added ${addedCount} prospects`, added: addedCount, errors: errorCount, total: prospects.length, snovCampaignListId, results }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({
+      success: true,
+      message: `Added ${addedCount} of ${prospects.length} prospects`,
+      added: addedCount,
+      errors: errorCount,
+      total: prospects.length,
+      snovCampaignListId,
+      results,
+    });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Error in snov-send-campaign:", error);
-    return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({ success: false, error: errorMessage });
   }
 };
 
