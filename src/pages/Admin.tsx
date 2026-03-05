@@ -1896,6 +1896,7 @@ const Admin = () => {
                                       fetchCampaigns();
                                       usageLimits.refetchLimits();
                                     }
+                                    setAddContactsSheetOpen(false);
                                   }}
                                 />
 
@@ -2485,14 +2486,14 @@ const Admin = () => {
 
                     {/* Contacts Table - THE main content */}
                     {pages.length === 0 ? (
-                      <div className="text-center py-16 bg-card rounded-lg border border-border space-y-4">
-                        <h3 className="text-xl font-semibold text-foreground">
-                          Generate Personalized Links
+                      <div className="text-center py-12 bg-card rounded-lg border border-border space-y-3">
+                        <h3 className="text-lg font-semibold text-foreground">
+                          No contacts yet
                         </h3>
-                        <p className="text-muted-foreground max-w-md mx-auto">
-                          Upload your contacts to generate unique landing pages for each person.
+                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                          Add contacts to generate personalized landing pages.
                         </p>
-                        <Button onClick={() => setAddContactsSheetOpen(true)}>
+                        <Button size="sm" onClick={() => setAddContactsSheetOpen(true)}>
                           <Plus className="w-4 h-4 mr-2" />
                           Add Contacts
                         </Button>
