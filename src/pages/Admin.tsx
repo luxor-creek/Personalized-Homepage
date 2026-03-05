@@ -2101,7 +2101,7 @@ const Admin = () => {
                                         {sendingSnov ? (
                                           <>
                                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
-                                            Sending...
+                                            Processing contacts...
                                           </>
                                         ) : (
                                           <>
@@ -2110,6 +2110,11 @@ const Admin = () => {
                                           </>
                                         )}
                                       </Button>
+                                      {sendingSnov && (
+                                        <p className="text-xs text-muted-foreground text-center mt-2">
+                                          Creating personalized pages and pushing to Snov.io. This may take 1–2 minutes for large lists. Please don't close this window.
+                                        </p>
+                                      )}
                                     </div>
                                     )}
                                   </DialogContent>
