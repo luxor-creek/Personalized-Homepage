@@ -3053,19 +3053,36 @@ const Admin = () => {
             <DialogTitle>Send Test Email</DialogTitle>
             <DialogDescription>Preview the email content for the first contact, sent to your account email.</DialogDescription>
           </DialogHeader>
-          {pages.length > 0 && user && (
+          {pages.length > 0 && user && (() => {
+            const contact = pages[0];
+            const pageLink = getPageUrl(contact.token);
+            const subjectText = `Personalized page for ${contact.first_name}${contact.company ? ` at ${contact.company}` : ""}`;
+            const bodyText = `Hi ${contact.first_name},\n\nI put together a personalized page just for you. Check it out here:\n\n${pageLink}\n\nLet me know what you think!\n\nBest regards`;
+            return (
             <div className="space-y-4 pt-4">
               <div className="bg-muted rounded-lg p-4 space-y-2 text-sm">
                 <p><span className="font-medium text-foreground">To:</span> <span className="text-muted-foreground">{user.email}</span></p>
-                <p><span className="font-medium text-foreground">Contact Name:</span> <span className="text-muted-foreground">{pages[0].first_name}{pages[0].last_name ? ` ${pages[0].last_name}` : ""}</span></p>
-                <p><span className="font-medium text-foreground">Company:</span> <span className="text-muted-foreground">{pages[0].company || "-"}</span></p>
-                <p><span className="font-medium text-foreground">Landing Page:</span> <span className="text-muted-foreground break-all">{getPageUrl(pages[0].token)}</span></p>
+                <p><span className="font-medium text-foreground">Subject:</span> <span className="text-muted-foreground">{subjectText}</span></p>
+                <p><span className="font-medium text-foreground">Contact:</span> <span className="text-muted-foreground">{contact.first_name}{contact.last_name ? ` ${contact.last_name}` : ""}{contact.company ? ` — ${contact.company}` : ""}</span></p>
+                <p><span className="font-medium text-foreground">Landing Page:</span> <span className="text-muted-foreground break-all">{pageLink}</span></p>
               </div>
-              <Button onClick={handleSendTestEmail} className="w-full">
-                Next — Open in Email Client
-              </Button>
+              <div className="bg-muted/50 rounded-lg p-4 text-sm whitespace-pre-wrap text-muted-foreground border">{bodyText}</div>
+              <div className="flex gap-2">
+                <Button onClick={handleSendTestEmail} variant="outline" className="flex-1">
+                  <Mail className="w-4 h-4 mr-2" />
+                  Open in Email Client
+                </Button>
+                <Button className="flex-1" onClick={() => {
+                  navigator.clipboard.writeText(`Subject: ${subjectText}\n\n${bodyText}`);
+                  toast({ title: "Copied to clipboard!", description: "Paste it into your email client." });
+                }}>
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy to Clipboard
+                </Button>
+              </div>
             </div>
-          )}
+            );
+          })()}
         </DialogContent>
       </Dialog>
 
