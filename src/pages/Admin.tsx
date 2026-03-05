@@ -1183,19 +1183,23 @@ const Admin = () => {
         },
       });
 
+      console.log("[snov-send] Response:", { data, error });
+
       if (error) {
-        throw new Error(data?.error || error.message || "Failed to send campaign");
+        // supabase.functions.invoke puts the response body in data even on error
+        const msg = typeof data === "object" && data?.error ? data.error : (error.message || "Failed to send campaign");
+        throw new Error(msg);
       }
 
-      if (data.success) {
-        setSnovResult({ added: data.added, errors: data.errors || 0, total: data.total || data.added });
+      if (data?.success || data?.added > 0) {
+        setSnovResult({ added: data.added || 0, errors: data.errors || 0, total: data.total || data.added || 0 });
         setUsedSnovWorkflow(true);
         fetchCampaigns();
         if (selectedCampaign) {
           fetchPages(selectedCampaign.id);
         }
       } else {
-        throw new Error(data.error || "Failed to send campaign");
+        throw new Error(data?.error || "Failed to send campaign");
       }
     } catch (error: any) {
       toast({
@@ -1988,7 +1992,7 @@ const Admin = () => {
                               {/* Snov.io + LinkedIn */}
                               <div className="space-y-3">
                                 {snovConnected ? (
-                                <Dialog open={snovDialogOpen} onOpenChange={setSnovDialogOpen}>
+                                <Dialog open={snovDialogOpen} onOpenChange={(open) => { if (!sendingSnov && !snovResult) setSnovDialogOpen(open); }}>
                                   <DialogTrigger asChild>
                                     <Button variant="outline" className="w-full justify-start" onClick={openSnovDialog}>
                                       <Send className="w-4 h-4 mr-2" />
