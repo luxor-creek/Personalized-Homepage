@@ -208,6 +208,7 @@ const Admin = () => {
     fromName: "",
   });
   const [sendingSnov, setSendingSnov] = useState(false);
+  const [snovResult, setSnovResult] = useState<{ added: number; errors: number; total: number } | null>(null);
 
   // Google Sheet import state
   const [gsheetDialogOpen, setGsheetDialogOpen] = useState(false);
@@ -1183,11 +1184,7 @@ const Admin = () => {
       if (error) throw error;
 
       if (data.success) {
-        toast({
-          title: "Campaign sent!",
-          description: `Added ${data.added} prospects to Snov.io campaign. ${data.errors > 0 ? `${data.errors} errors.` : ""}`,
-        });
-        setSnovDialogOpen(false);
+        setSnovResult({ added: data.added, errors: data.errors || 0, total: data.total || data.added });
         setUsedSnovWorkflow(true);
         fetchCampaigns();
         if (selectedCampaign) {
@@ -1209,6 +1206,7 @@ const Admin = () => {
 
   const openSnovDialog = () => {
     setSnovDialogOpen(true);
+    setSnovResult(null);
     fetchSnovLists();
     setWorkflowCardsExpanded(false);
   };
@@ -1999,6 +1997,39 @@ const Admin = () => {
                                         Import contacts from a Snov.io list and enrich with personalized links.
                                       </DialogDescription>
                                     </DialogHeader>
+                                    {snovResult ? (
+                                      <div className="space-y-4 pt-4">
+                                        <div className="bg-green-50 border border-green-200 rounded-lg p-5 text-center space-y-2">
+                                          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto">
+                                            <CheckCircle2 className="w-6 h-6 text-green-600" />
+                                          </div>
+                                          <h4 className="font-semibold text-green-800 text-lg">Contacts Pushed to Snov.io!</h4>
+                                          <p className="text-sm text-green-700">
+                                            {snovResult.added} contact{snovResult.added !== 1 ? "s" : ""} added with personalized links.
+                                            {snovResult.errors > 0 && <span className="text-amber-600"> {snovResult.errors} error{snovResult.errors !== 1 ? "s" : ""}.</span>}
+                                          </p>
+                                        </div>
+                                        <div className="bg-muted/50 rounded-lg p-4 text-sm space-y-2">
+                                          <p className="font-medium text-foreground">What to do next:</p>
+                                          <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                                            <li>Open your drip campaign in Snov.io</li>
+                                            <li>Make sure your email template uses <code className="bg-muted px-1 rounded text-foreground">{"{{landing_page}}"}</code></li>
+                                            <li>Start or resume the campaign</li>
+                                          </ol>
+                                        </div>
+                                        <div className="flex gap-2">
+                                          <a href="https://app.snov.io/campaigns" target="_blank" rel="noopener noreferrer" className="flex-1">
+                                            <Button className="w-full" variant="default">
+                                              <ExternalLink className="w-4 h-4 mr-2" />
+                                              Open Snov.io Campaigns
+                                            </Button>
+                                          </a>
+                                          <Button variant="outline" onClick={() => { setSnovDialogOpen(false); setSnovResult(null); }}>
+                                            Done
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    ) : (
                                     <div className="space-y-4 pt-4">
                                       {loadingSnovLists ? (
                                         <div className="flex items-center justify-center py-4">
@@ -2075,6 +2106,7 @@ const Admin = () => {
                                         )}
                                       </Button>
                                     </div>
+                                    )}
                                   </DialogContent>
                                 </Dialog>
                                 ) : (

@@ -8,24 +8,32 @@ import AIChatAssistant from "./AIChatAssistant";
  */
 const AuthenticatedChatBubble = () => {
   const [isAuth, setIsAuth] = useState(false);
+  const [isPublicPage, setIsPublicPage] = useState(false);
 
   useEffect(() => {
-    // Check initial session
+    // Check if on a public-facing page where chatbot should be hidden
+    const checkPath = () => {
+      const path = window.location.pathname;
+      setIsPublicPage(path.startsWith("/view/") || path.startsWith("/builder-preview/") || path.startsWith("/p/"));
+    };
+    checkPath();
+    window.addEventListener("popstate", checkPath);
+    return () => window.removeEventListener("popstate", checkPath);
+  }, []);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuth(!!session);
     });
-
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setIsAuth(!!session);
       }
     );
-
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!isAuth) return null;
+  if (!isAuth || isPublicPage) return null;
   return <AIChatAssistant />;
 };
 
