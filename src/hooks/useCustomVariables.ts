@@ -13,16 +13,16 @@ export interface CustomVariable {
 
 // Built-in system variables (always available)
 export const SYSTEM_VARIABLES = [
-  { token: "{{first_name}}", name: "First Name", type: "System" },
-  { token: "{{FIRST_NAME}}", name: "First Name (ALL CAPS)", type: "System" },
-  { token: "{{last_name}}", name: "Last Name", type: "System" },
-  { token: "{{LAST_NAME}}", name: "Last Name (ALL CAPS)", type: "System" },
-  { token: "{{company}}", name: "Company", type: "System" },
-  { token: "{{COMPANY}}", name: "Company (ALL CAPS)", type: "System" },
-  { token: "{{full_name}}", name: "Full Name", type: "System" },
-  { token: "{{FULL_NAME}}", name: "Full Name (ALL CAPS)", type: "System" },
-  { token: "{{landing_page}}", name: "Landing Page URL", type: "System" },
-  { token: "{{custom_field}}", name: "Custom Field", type: "System" },
+  { token: "{{first_name}}", name: "First Name", type: "System", snovToken: "{{first_name}}", mailchimpToken: "*|FNAME|*" },
+  { token: "{{FIRST_NAME}}", name: "First Name (ALL CAPS)", type: "System", snovToken: "{{FIRST_NAME}}", mailchimpToken: "*|FNAME|*" },
+  { token: "{{last_name}}", name: "Last Name", type: "System", snovToken: "{{last_name}}", mailchimpToken: "*|LNAME|*" },
+  { token: "{{LAST_NAME}}", name: "Last Name (ALL CAPS)", type: "System", snovToken: "{{LAST_NAME}}", mailchimpToken: "*|LNAME|*" },
+  { token: "{{company}}", name: "Company", type: "System", snovToken: "{{company}}", mailchimpToken: "*|COMPANY|*" },
+  { token: "{{COMPANY}}", name: "Company (ALL CAPS)", type: "System", snovToken: "{{COMPANY}}", mailchimpToken: "*|COMPANY|*" },
+  { token: "{{full_name}}", name: "Full Name", type: "System", snovToken: "{{first_name}} {{last_name}}", mailchimpToken: "*|FNAME|* *|LNAME|*" },
+  { token: "{{FULL_NAME}}", name: "Full Name (ALL CAPS)", type: "System", snovToken: "{{FIRST_NAME}} {{LAST_NAME}}", mailchimpToken: "*|FNAME|* *|LNAME|*" },
+  { token: "{{landing_page}}", name: "Landing Page URL", type: "System", snovToken: "{{landing_page}}", mailchimpToken: "*|PPAGE|*" },
+  { token: "{{custom_field}}", name: "Custom Field", type: "System", snovToken: "-", mailchimpToken: "-" },
 ];
 
 export function useCustomVariables() {

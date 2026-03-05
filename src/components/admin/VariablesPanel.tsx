@@ -34,8 +34,8 @@ export default function VariablesPanel() {
   const [formFallback, setFormFallback] = useState("");
 
   const allRows = [
-    ...SYSTEM_VARIABLES.map((v) => ({ id: v.token, name: v.name, token: v.token, type: "System", fallback: "-", isSystem: true })),
-    ...variables.map((v) => ({ id: v.id, name: v.name, token: v.token, type: "Custom", fallback: v.fallback_value || "-", isSystem: false })),
+    ...SYSTEM_VARIABLES.map((v) => ({ id: v.token, name: v.name, token: v.token, type: "System", fallback: "-", isSystem: true, snovToken: v.snovToken || "-", mailchimpToken: v.mailchimpToken || "-" })),
+    ...variables.map((v) => ({ id: v.id, name: v.name, token: v.token, type: "Custom", fallback: v.fallback_value || "-", isSystem: false, snovToken: "-", mailchimpToken: "-" })),
   ];
 
   const resetForm = () => { setFormName(""); setFormToken(""); setFormFallback(""); };
@@ -106,19 +106,23 @@ export default function VariablesPanel() {
       </div>
 
       <div className="border border-border rounded-lg overflow-hidden">
+        <div className="bg-muted/30 px-4 py-3 border-b border-border text-sm text-muted-foreground">
+          Click any token to copy it. Use <strong className="text-foreground">Page Builder</strong> tokens in your landing page templates, <strong className="text-orange-700">Snov.io</strong> tokens in your Snov.io email templates, and <strong className="text-yellow-700">Mailchimp</strong> tokens in your Mailchimp campaigns.
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Variable Name</TableHead>
-              <TableHead>Token</TableHead>
+              <TableHead>Page Builder</TableHead>
+              <TableHead>Snov.io Email</TableHead>
+              <TableHead>Mailchimp Email</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Fallback</TableHead>
               <TableHead className="w-12">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Loading…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Loading…</TableCell></TableRow>
             ) : allRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell className="font-medium">
@@ -128,7 +132,21 @@ export default function VariablesPanel() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <code className="text-xs bg-muted px-2 py-1 rounded font-mono">{row.token}</code>
+                  <code className="text-xs bg-muted px-2 py-1 rounded font-mono cursor-pointer hover:bg-primary/10 transition-colors" onClick={() => copyToken(row.token)}>{row.token}</code>
+                </TableCell>
+                <TableCell>
+                  {row.snovToken !== "-" ? (
+                    <code className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded font-mono cursor-pointer hover:bg-orange-100 transition-colors" onClick={() => copyToken(row.snovToken)}>{row.snovToken}</code>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {row.mailchimpToken !== "-" ? (
+                    <code className="text-xs bg-yellow-50 text-yellow-700 px-2 py-1 rounded font-mono cursor-pointer hover:bg-yellow-100 transition-colors" onClick={() => copyToken(row.mailchimpToken)}>{row.mailchimpToken}</code>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </TableCell>
                 <TableCell>
                   <Badge variant={row.isSystem ? "secondary" : "outline"}>
@@ -136,7 +154,6 @@ export default function VariablesPanel() {
                     {row.type}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-muted-foreground text-sm">{row.fallback}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
