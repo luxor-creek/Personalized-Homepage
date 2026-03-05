@@ -1066,13 +1066,15 @@ const Admin = () => {
     try {
       const { data, error } = await supabase.functions.invoke("snov-get-lists");
       
-      if (error) throw error;
-      
-      if (data.success && data.lists) {
-        setSnovLists(data.lists);
-      } else {
-        throw new Error(data.error || "Failed to fetch Snov.io lists");
+      if (error) {
+        throw new Error(data?.error || error.message || "Failed to connect to Snov.io");
       }
+      
+      if (!data?.success) {
+        throw new Error(data?.error || "Failed to fetch Snov.io lists");
+      }
+      
+      setSnovLists(data.lists || []);
     } catch (error: any) {
       toast({
         title: "Error fetching Snov.io lists",
@@ -1105,21 +1107,23 @@ const Admin = () => {
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(data?.error || error.message || "Failed to send campaign");
+      }
 
-      if (data.success) {
-        toast({
-          title: "Campaign sent!",
-          description: `Added ${data.added} prospects to Snov.io drip campaign. ${data.errors > 0 ? `${data.errors} errors.` : ""}`,
-        });
-        setSnovDialogOpen(false);
-        setUsedSnovWorkflow(true);
-        fetchCampaigns();
-        if (selectedCampaign) {
-          fetchPages(selectedCampaign.id);
-        }
-      } else {
-        throw new Error(data.error || "Failed to send campaign");
+      if (!data?.success) {
+        throw new Error(data?.error || "Failed to send campaign");
+      }
+
+      toast({
+        title: "Campaign sent!",
+        description: `Added ${data.added} prospects to Snov.io drip campaign. ${data.errors > 0 ? `${data.errors} errors.` : ""}`,
+      });
+      setSnovDialogOpen(false);
+      setUsedSnovWorkflow(true);
+      fetchCampaigns();
+      if (selectedCampaign) {
+        fetchPages(selectedCampaign.id);
       }
     } catch (error: any) {
       toast({
@@ -1142,12 +1146,13 @@ const Admin = () => {
     setLoadingSnovCampaigns(true);
     try {
       const { data, error } = await supabase.functions.invoke("snov-get-campaigns");
-      if (error) throw error;
-      if (data.success && data.campaigns) {
-        setSnovCampaigns(data.campaigns);
-      } else {
-        throw new Error(data.error || "Failed to fetch campaigns");
+      if (error) {
+        throw new Error(data?.error || error.message || "Failed to fetch campaigns");
       }
+      if (!data?.success) {
+        throw new Error(data?.error || "Failed to fetch campaigns");
+      }
+      setSnovCampaigns(data.campaigns || []);
     } catch (error: any) {
       toast({ title: "Error fetching Snov.io campaigns", description: error.message, variant: "destructive" });
     } finally {

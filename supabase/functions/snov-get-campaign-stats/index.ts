@@ -8,6 +8,9 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const jsonResponse = (body: unknown) =>
+  new Response(JSON.stringify(body), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
 async function fetchCampaignAnalytics(accessToken: string, snovCampaignId?: number): Promise<unknown> {
   const params = new URLSearchParams();
   params.append("access_token", accessToken);
@@ -56,10 +59,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const authHeader = req.headers.get("Authorization") || "";
     if (!authHeader.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Missing authorization" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return jsonResponse({ success: false, error: "Not authenticated. Please log in again." });
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -68,16 +68,12 @@ const handler = async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const jwt = authHeader.replace("Bearer ", "").trim();
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(jwt);
-    if (claimsError || !claimsData?.claims?.sub) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return jsonResponse({ success: false, error: "Session expired. Please log in again." });
     }
 
-    const userId = claimsData.claims.sub as string;
+    const userId = user.id;
 
     const url = new URL(req.url);
     const snovCampaignIdParam = url.searchParams.get("snovCampaignId");
@@ -85,9 +81,21 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Fetching Snov.io stats${snovCampaignId ? ` for campaign ${snovCampaignId}` : " (all campaigns)"}...`);
 
-    const { clientId, clientSecret } = await getSnovCredentials(supabase, userId);
-    const accessToken = await getSnovAccessToken(clientId, clientSecret);
+    let clientId: string, clientSecret: string;
+    try {
+      ({ clientId, clientSecret } = await getSnovCredentials(supabase, userId));
+    } catch (e: any) {
+      if (e.message === "SNOV_NOT_CONFIGURED") {
+        return jsonResponse({
+          success: false,
+          error: "Snov.io is not connected. Go to Settings \u2192 Integrations to add your Snov.io API credentials.",
+          code: "SNOV_NOT_CONFIGURED",
+        });
+      }
+      throw e;
+    }
 
+    const accessToken = await getSnovAccessToken(clientId, clientSecret);
     const analytics = await fetchCampaignAnalytics(accessToken, snovCampaignId);
 
     let replies = null;
@@ -102,17 +110,10 @@ const handler = async (req: Request): Promise<Response> => {
       ]);
     }
 
-    return new Response(
-      JSON.stringify({ success: true, analytics, replies, opens, clicks }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
+    return jsonResponse({ success: true, analytics, replies, opens, clicks });
+  } catch (error: any) {
     console.error("Error in snov-get-campaign-stats:", error);
-    return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return jsonResponse({ success: false, error: error.message || "An unexpected error occurred" });
   }
 };
 
