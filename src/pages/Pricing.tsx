@@ -234,7 +234,7 @@ const Pricing = () => {
         {/* FAQ / Info */}
         <div className="mt-12 text-center text-sm text-muted-foreground space-y-2">
           <p>All plans include a 2-week free trial. Cancel anytime.</p>
-          <p>Questions? <a href="mailto:paul@kickervideo.com" className="text-primary hover:underline">Contact us</a></p>
+          <p>Questions? <a href="mailto:hello@personalized.page" className="text-primary hover:underline">Contact us</a></p>
         </div>
       </div>
 

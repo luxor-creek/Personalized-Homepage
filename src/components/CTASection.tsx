@@ -12,9 +12,9 @@ interface CTASectionProps {
 }
 
 const CTASection = ({ 
-  title = "Ready to Transform Your Recruitment Strategy?",
-  subtitle = "Let's discuss how Kicker Video can help your department attract the next generation of law enforcement professionals.",
-  contactEmail = "hello@kickervideo.com",
+  title = "Ready to Get Started?",
+  subtitle = "Let's discuss how personalized landing pages can help you connect with your audience.",
+  contactEmail = "hello@personalized.page",
   showPrimaryButton = true,
   showSecondaryButton = true,
   onLinkClick,
@@ -61,7 +61,7 @@ const CTASection = ({
             )}
             {showSecondaryButton && (
             <Button variant="heroOutline" size="xl" asChild>
-              <a href="https://kickervideo.com" target="_blank" rel="noopener noreferrer" onClick={() => onLinkClick?.("Visit Website", "https://kickervideo.com")}>
+              <a href="https://personalized.page" target="_blank" rel="noopener noreferrer" onClick={() => onLinkClick?.("Visit Website", "https://personalized.page")}>
                 <ExternalLink className="w-5 h-5" />
                 Visit Website
               </a>
@@ -79,13 +79,13 @@ const CTASection = ({
             </a>
             <span className="hidden sm:block text-border">|</span>
             <a 
-              href="https://kickervideo.com" 
+              href="https://personalized.page" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
-              kickervideo.com
+              personalized.page
             </a>
           </div>
         </div>
