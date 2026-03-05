@@ -202,8 +202,8 @@ const Admin = () => {
   const [sendingMailchimp, setSendingMailchimp] = useState(false);
   const [mailchimpResult, setMailchimpResult] = useState<{ added: number; mergeTag: string } | null>(null);
   const [snovEmailConfig, setSnovEmailConfig] = useState({
-    subject: "{{first_name}}, check out your personalized video",
-    body: "Hi {{first_name}},\n\nI created a personalized video just for you. Check it out here:\n\n{{country}}\n\nLet me know what you think!\n\nBest regards",
+    subject: "{{first_name}}, check out your personalized page",
+    body: "Hi {{first_name}},\n\nI put together a personalized page just for you. Check it out here:\n\n{{country}}\n\nLet me know what you think!\n\nBest regards",
     fromEmail: "",
     fromName: "",
   });
@@ -1086,7 +1086,7 @@ const Admin = () => {
     const pageLink = getPageUrl(firstContact.token);
     const subject = encodeURIComponent(`Test: Personalized page for ${firstContact.first_name}${firstContact.company ? ` at ${firstContact.company}` : ""}`);
     const body = encodeURIComponent(
-      `Hi ${firstContact.first_name},\n\nI created a personalized video just for you. Check it out here:\n\n${pageLink}\n\nLet me know what you think!\n\nBest regards`
+      `Hi ${firstContact.first_name},\n\nI put together a personalized page just for you. Check it out here:\n\n${pageLink}\n\nLet me know what you think!\n\nBest regards`
     );
     const mailto = `mailto:${user.email}?subject=${subject}&body=${body}`;
     window.open(mailto, "_blank");
