@@ -35,6 +35,14 @@ import {
   HeartHandshake,
   Ticket,
   GraduationCap,
+  Video,
+  FileText,
+  QrCode,
+  FileDown,
+  Calendar,
+  Table,
+  GitCompare,
+  LayoutGrid,
 } from "lucide-react";
 
 /* ─────────────────────────── Helper: Animate-on-scroll ─────────── */
@@ -736,63 +744,114 @@ const UseCaseGridSection = () => {
 };
 
 /* ═══════════════════════════════════════════════════════════════════
-   SECTION — USE CASE STORIES
+   SECTION — HYPER PERSONALIZED PAGE FEATURES
    ═══════════════════════════════════════════════════════════════════ */
 const UseCaseStoriesSection = () => {
   const { ref, visible } = useInView();
 
-  const stories = [
+  const features = [
     {
-      icon: HeartHandshake,
-      label: "Fundraising",
-      headline: "Donors don't give to organizations; they give to impact.",
-      description: "Show them the specific project they are funding with a page built just for them. Replace mass appeal with a personal connection that drives 40% higher retention.",
-      accent: "bg-rose-500/[0.08] text-rose-600",
+      icon: Video,
+      label: "Video",
+      headline: "Embed personalized video",
+      description: "Add YouTube, Vimeo, or Loom videos that play inline or as a cinematic background. Greet each prospect by name with a video built just for them.",
+      accent: "bg-red-500/[0.08] text-red-600",
     },
     {
-      icon: Ticket,
-      label: "Invitations",
-      headline: "Standard invites get lost in the noise.",
-      description: 'A personalized invitation says "You aren\'t just a seat in the room—you\'re the reason for the event." Turn every guest into a VIP.',
+      icon: FileText,
+      label: "Forms",
+      headline: "Capture leads on-page",
+      description: "Add contact forms with customizable fields directly on the page. Submissions appear in your dashboard and can trigger Zapier workflows.",
+      accent: "bg-blue-500/[0.08] text-blue-600",
+    },
+    {
+      icon: QrCode,
+      label: "QR Codes",
+      headline: "Bridge print and digital",
+      description: "Auto-generated QR codes link directly to each personalized page. Perfect for event badges, direct mail, and printed collateral.",
+      accent: "bg-violet-500/[0.08] text-violet-600",
+    },
+    {
+      icon: FileDown,
+      label: "PDF Downloads",
+      headline: "Gate your best content",
+      description: "Add downloadable PDFs, e-books, or whitepapers. Pair with a form to capture leads before the download — or let prospects grab it instantly.",
+      accent: "bg-emerald-500/[0.08] text-emerald-600",
+    },
+    {
+      icon: MousePointerClick,
+      label: "CTAs",
+      headline: "Drive action with smart CTAs",
+      description: "Customizable call-to-action buttons that track every click. A/B test button text, colors, and placement to maximize conversions.",
+      accent: "bg-orange-500/[0.08] text-orange-600",
+    },
+    {
+      icon: Heart,
+      label: "Social Proof",
+      headline: "Build trust instantly",
+      description: "Add testimonials, logo clouds, and social proof sections. Show prospects that companies like theirs already trust you.",
+      accent: "bg-pink-500/[0.08] text-pink-600",
+    },
+    {
+      icon: Calendar,
+      label: "Calendar Booking",
+      headline: "Book meetings on the spot",
+      description: "Embed your Calendly or booking widget directly on the page. Prospects schedule a call without ever leaving their personalized experience.",
+      accent: "bg-cyan-500/[0.08] text-cyan-600",
+    },
+    {
+      icon: DollarSign,
+      label: "Pricing Tables",
+      headline: "Present tailored pricing",
+      description: "Show custom pricing tiers with feature comparisons. Personalize the recommended plan per prospect to increase close rates.",
       accent: "bg-amber-500/[0.08] text-amber-600",
     },
     {
-      icon: UserCheck,
-      label: "Customer Success",
-      headline: "Turn a support ticket into a 'Thank You' moment.",
-      description: "Greet your customers with a custom portal that remembers their history. Transform transactional touchpoints into loyalty-building experiences.",
-      accent: "bg-emerald-500/[0.08] text-emerald-600",
+      icon: GitCompare,
+      label: "Comparison Tables",
+      headline: "Win the head-to-head",
+      description: "Side-by-side comparison sections that highlight your advantage. Show prospects exactly why you're the better choice.",
+      accent: "bg-indigo-500/[0.08] text-indigo-600",
+    },
+    {
+      icon: LayoutGrid,
+      label: "And Much More",
+      headline: "30+ section types",
+      description: "FAQs, stats counters, team bios, galleries, countdown timers, multi-column layouts, dividers, footers — everything you need to build pages that convert.",
+      accent: "bg-slate-500/[0.08] text-slate-600",
     },
   ];
 
   return (
     <section className="py-24 lg:py-36 bg-background relative overflow-hidden">
-      {/* Subtle accent */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10" ref={ref}>
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">Beyond Sales</p>
+          <p className="text-primary/90 font-medium tracking-widest uppercase text-xs mb-5">Hyper Personalized Pages</p>
           <h2 className="font-display text-3xl md:text-4xl lg:text-[2.75rem] text-foreground leading-[1.15] mb-6">
             One tool.{" "}
             <span className="text-gradient">Every touchpoint.</span>
           </h2>
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Everything you need to build high-converting personalized landing pages — no code required.
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {stories.map((story, i) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 max-w-6xl mx-auto">
+          {features.map((feature, i) => (
             <div
-              key={story.label}
+              key={feature.label}
               className={`relative transition-all duration-500 ${visible ? "animate-fade-up" : "opacity-0"}`}
-              style={{ animationDelay: `${i * 0.12}s` }}
+              style={{ animationDelay: `${i * 0.06}s` }}
             >
-              <div className="bg-card rounded-xl border border-border/50 p-7 h-full hover-lift">
-                <div className={`w-11 h-11 rounded-lg flex items-center justify-center mb-5 ${story.accent.split(" ")[0]}`}>
-                  <story.icon className={`w-5 h-5 ${story.accent.split(" ")[1]}`} />
+              <div className="bg-card rounded-xl border border-border/50 p-5 h-full hover-lift">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${feature.accent.split(" ")[0]}`}>
+                  <feature.icon className={`w-5 h-5 ${feature.accent.split(" ")[1]}`} />
                 </div>
-                <p className="text-xs font-semibold uppercase tracking-widest mb-3 text-muted-foreground/60">{story.label}</p>
-                <h3 className="font-semibold text-foreground text-lg mb-3 leading-snug">{story.headline}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{story.description}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 text-muted-foreground/60">{feature.label}</p>
+                <h3 className="font-semibold text-foreground text-sm mb-2 leading-snug">{feature.headline}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
             </div>
           ))}
