@@ -21,6 +21,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Pricing from "./pages/Pricing";
 import Billing from "./pages/Billing";
 import MailchimpCallback from "./pages/MailchimpCallback";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 import AuthenticatedChatBubble from "./components/AuthenticatedChatBubble";
 
 const queryClient = new QueryClient();
@@ -57,6 +59,8 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/billing" element={<Billing />} />
           <Route path="/auth/mailchimp/callback" element={<MailchimpCallback />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/admin/edit/:slug" element={<RedirectToBuilder />} />
           <Route path="/wine-video" element={<WineVideoTemplate />} />
           <Route path="/view/:token" element={<PersonalizedLanding />} />

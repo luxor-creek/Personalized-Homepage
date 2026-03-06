@@ -10,7 +10,7 @@ import stepDesignImg from "@/assets/step-design.png";
 import stepSyncImg from "@/assets/step-sync.png";
 import stepLaunchImg from "@/assets/step-launch.png";
 import stepMonitorImg from "@/assets/step-monitor.jpeg";
-import missionsShowcaseImg from "@/assets/missions-showcase.png";
+import missionsShowcaseImg from "@/assets/ppage-home-templates.png";
 import {
   ArrowRight,
   ArrowDown,
@@ -227,7 +227,7 @@ const MissionsShowcaseSection = () => {
           <div className="rounded-2xl overflow-hidden shadow-premium border border-border/40 bw-to-color">
             <img
               src={missionsShowcaseImg}
-              alt="Six personalized page examples: nonprofit donation reports, VIP executive invitations, corporate onboarding portals, milestone celebrations, support ticket responses, and exclusive event access"
+              alt="Personalized.page template library showing pre-built landing page templates"
               className="w-full h-auto block"
               loading="lazy"
             />
@@ -837,8 +837,13 @@ const HomeFooter = () => (
   <footer className="py-10 bg-background border-t border-border/50">
     <div className="container mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
       <BrandLogo className="h-7" />
+      <div className="flex items-center gap-4 text-xs text-muted-foreground/60">
+        <a href="/privacy" className="hover:text-foreground transition-colors">Privacy</a>
+        <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+        <a href="https://kicker.ventures" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Kicker Ventures</a>
+      </div>
       <p className="text-xs text-muted-foreground/60">
-        &copy; {new Date().getFullYear()} Personalized Page. All rights reserved.
+        &copy; {new Date().getFullYear()} <a href="https://kicker.ventures" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Kicker Ventures</a>. All rights reserved.
       </p>
     </div>
   </footer>
