@@ -6,7 +6,7 @@ import BetaSignupForm from "@/components/BetaSignupForm";
 import BrandLogo from "@/components/BrandLogo";
 import snovioLogo from "@/assets/snovio.svg";
 import mailchimpLogo from "@/assets/mailchimp.svg";
-import stepDesignImg from "@/assets/step-design.png";
+import stepDesignImg from "@/assets/missions-showcase.png";
 import stepSyncImg from "@/assets/step-sync.png";
 import stepLaunchImg from "@/assets/step-launch.png";
 import stepMonitorImg from "@/assets/step-monitor.jpeg";
@@ -310,9 +310,10 @@ interface WorkflowStepProps {
   reverse?: boolean;
   bgClass?: string;
   icon: React.ElementType;
+  imageClass?: string;
 }
 
-const WorkflowStep = ({ stepNum, label, title, description, image, imageAlt, reverse = false, bgClass = "bg-background", icon: Icon }: WorkflowStepProps) => {
+const WorkflowStep = ({ stepNum, label, title, description, image, imageAlt, reverse = false, bgClass = "bg-background", icon: Icon, imageClass = "" }: WorkflowStepProps) => {
   const { ref, visible } = useInView(0.1);
 
   return (
@@ -345,7 +346,7 @@ const WorkflowStep = ({ stepNum, label, title, description, image, imageAlt, rev
             <div
               className={`transition-all duration-700 delay-150 ${visible ? "animate-fade-up" : "opacity-0"}`}
             >
-              <div className="rounded-xl overflow-hidden shadow-premium border border-border/40">
+              <div className={`rounded-xl overflow-hidden shadow-premium border border-border/40 ${imageClass}`}>
                 <img
                   src={image}
                   alt={imageAlt}
@@ -401,6 +402,7 @@ const WorkflowSections = () => (
       image={stepDesignImg}
       imageAlt="Page builder with personalization variables and section editing"
       bgClass="bg-background"
+      imageClass="bw-to-color"
     />
 
     {/* Step 2: Sync */}
