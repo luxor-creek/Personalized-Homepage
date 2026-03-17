@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BrandLogo from "@/components/BrandLogo";
 import {
-  Check, ArrowLeft, Crown, Zap, Building2, Loader2, MessageSquare,
+  Check, Crown, Zap, Building2, Loader2, MessageSquare, ArrowRight,
 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
@@ -17,21 +15,22 @@ import { Textarea } from "@/components/ui/textarea";
 
 const plans = [
   {
-    id: "starter",
-    name: "Starter",
+    id: "solo",
+    name: "Solo",
     price: 29,
     period: "/mo",
     icon: Zap,
     description: "For individuals getting started with personalized outreach.",
     features: [
-      "Up to 25 personalized pages",
-      "Up to 50 campaigns",
-      "All templates & builder access",
+      "10 page templates",
+      "10 active campaigns",
+      "Up to 100 personalized links per campaign",
       "CSV & Google Sheet import",
+      "Mailchimp integration",
       "Page view analytics",
       "Email support",
     ],
-    cta: "Upgrade to Starter",
+    cta: "Start Free Trial",
     popular: false,
   },
   {
@@ -42,16 +41,17 @@ const plans = [
     icon: Crown,
     description: "For teams scaling personalized campaigns without limits.",
     features: [
-      "Unlimited personalized pages",
-      "Unlimited campaigns",
-      "All templates & builder access",
+      "Unlimited page templates",
+      "Unlimited personalized links",
+      "50 active campaigns",
       "CSV & Google Sheet import",
-      "Page view analytics",
+      "Mailchimp integration",
       "Snov.io integration",
-      "Personalized subdomain e.g. yourcompanyname.personalized.page",
+      "Zapier integration",
+      "Personalized subdomain e.g. yourname.personalized.page",
       "Priority support",
     ],
-    cta: "Upgrade to Pro",
+    cta: "Start Free Trial",
     popular: true,
   },
   {
@@ -75,171 +75,172 @@ const plans = [
 ];
 
 const Pricing = () => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user, profile, checkingAuth } = useAuth();
-  const [checkingOut, setCheckingOut] = useState<string | null>(null);
   const [enterpriseDialogOpen, setEnterpriseDialogOpen] = useState(false);
   const [enterpriseForm, setEnterpriseForm] = useState({ name: "", email: "", company: "", message: "" });
   const [sendingEnterprise, setSendingEnterprise] = useState(false);
-
-  const handleUpgrade = async (planId: string) => {
-    if (planId === "enterprise") {
-      setEnterpriseForm({ name: "", email: user?.email || "", company: "", message: "" });
-      setEnterpriseDialogOpen(true);
-      return;
-    }
-
-    setCheckingOut(planId);
-
-    // TODO: Replace with actual Stripe checkout
-    // const { data, error } = await supabase.functions.invoke("create-checkout", {
-    //   body: { planId, returnUrl: window.location.origin + "/billing" },
-    // });
-    // if (data?.url) window.location.href = data.url;
-
-    setTimeout(() => {
-      toast({
-        title: "Stripe not connected yet",
-        description: "Checkout will be available once Stripe is integrated.",
-      });
-      setCheckingOut(null);
-    }, 1500);
-  };
+  const [enterpriseSent, setEnterpriseSent] = useState(false);
 
   const handleEnterpriseSubmit = async () => {
+    if (!enterpriseForm.name || !enterpriseForm.email || !enterpriseForm.company) return;
     setSendingEnterprise(true);
-    // TODO: Send enterprise inquiry email via edge function
-    setTimeout(() => {
-      toast({ title: "Request sent!", description: "We'll be in touch within 1 business day." });
+    try {
+      // Fire-and-forget — replace with your edge function if needed
+      await fetch("/api/enterprise-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(enterpriseForm),
+      }).catch(() => {}); // fail silently if endpoint not set up
+      setEnterpriseSent(true);
+    } finally {
       setSendingEnterprise(false);
-      setEnterpriseDialogOpen(false);
-    }, 1000);
+    }
   };
-
-  const currentPlan = profile?.plan || "trial";
-  const trialDaysLeft = profile?.trial_ends_at
-    ? Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0;
-
-  if (checkingAuth) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <BrandLogo className="h-8" />
-          <Button variant="ghost" size="sm" onClick={() => navigate("/workspace")}>
-            <ArrowLeft className="w-4 h-4 mr-2" />Back to Dashboard
-          </Button>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
-        {/* Trial banner */}
-        {currentPlan === "trial" && (
-          <div className="mb-8 rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
-            <p className="text-sm text-foreground">
-              You're on a <strong>free trial</strong> —{" "}
-              {trialDaysLeft > 0
-                ? <>{trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} remaining</>
-                : <span className="text-destructive font-semibold">trial expired</span>
-              }.
-              Upgrade to keep your pages live.
-            </p>
+      {/* Nav */}
+      <nav className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+          <Link to="/">
+            <BrandLogo className="h-8" />
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link to="/auth">
+              <Button variant="ghost" size="sm">Sign In</Button>
+            </Link>
+            <Link to="/auth">
+              <Button size="sm">
+                Get Started
+                <ArrowRight className="w-4 h-4 ml-1.5" />
+              </Button>
+            </Link>
           </div>
-        )}
+        </div>
+      </nav>
 
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Choose Your Plan</h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Scale your personalized outreach. All plans include full access to templates, the page builder, and analytics.
+      <div className="container mx-auto px-4 py-16 max-w-5xl">
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-foreground mb-3 tracking-tight">
+            Simple, transparent pricing
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-lg mx-auto">
+            Start free for 7 days. No credit card required. Cancel anytime.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {plans.map((plan) => {
-            const isCurrent = currentPlan === plan.id;
-            return (
-              <div
-                key={plan.id}
-                className={`relative bg-card rounded-xl border ${
-                  plan.popular ? "border-primary shadow-lg shadow-primary/10" : "border-border"
-                } p-6 flex flex-col`}
-              >
-                {plan.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                    Most Popular
-                  </Badge>
-                )}
-
-                <div className="mb-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
-                    <plan.icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
-                </div>
-
-                <div className="mb-6">
-                  {plan.price !== null ? (
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-4xl font-bold text-foreground">${plan.price}</span>
-                      <span className="text-muted-foreground">{plan.period}</span>
-                    </div>
-                  ) : (
-                    <div className="text-2xl font-bold text-foreground">Custom</div>
-                  )}
-                </div>
-
-                <ul className="space-y-3 mb-6 flex-1">
-                  {plan.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                      <span className="text-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {isCurrent ? (
-                  <Button variant="outline" disabled className="w-full">
-                    Current Plan
-                  </Button>
-                ) : (
-                  <Button
-                    className={`w-full ${plan.popular ? "" : ""}`}
-                    variant={plan.popular ? "default" : "outline"}
-                    onClick={() => handleUpgrade(plan.id)}
-                    disabled={checkingOut === plan.id}
-                  >
-                    {checkingOut === plan.id ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing...</>
-                    ) : plan.id === "enterprise" ? (
-                      <><MessageSquare className="w-4 h-4 mr-2" />{plan.cta}</>
-                    ) : (
-                      plan.cta
-                    )}
-                  </Button>
-                )}
-              </div>
-            );
-          })}
+        {/* Trial callout */}
+        <div className="mb-10 rounded-xl border border-border bg-card p-5 flex items-start gap-4 max-w-2xl mx-auto">
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0 text-lg">
+            🎁
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">Free Trial — 7 days</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              1 page template · Up to 100 personalized landing pages · No credit card required
+            </p>
+          </div>
         </div>
 
-        {/* FAQ / Info */}
+        {/* Plans */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {plans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`relative bg-card rounded-xl border ${
+                plan.popular
+                  ? "border-primary shadow-lg shadow-primary/10"
+                  : "border-border"
+              } p-6 flex flex-col`}
+            >
+              {plan.popular && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                  Most Popular
+                </Badge>
+              )}
+
+              <div className="mb-4">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                  <plan.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
+              </div>
+
+              <div className="mb-6">
+                {plan.price !== null ? (
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-foreground">${plan.price}</span>
+                    <span className="text-muted-foreground">{plan.period}</span>
+                  </div>
+                ) : (
+                  <div className="text-2xl font-bold text-foreground">Custom</div>
+                )}
+              </div>
+
+              <ul className="space-y-3 mb-6 flex-1">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-2 text-sm">
+                    <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-foreground">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {plan.id === "enterprise" ? (
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={() => {
+                    setEnterpriseForm({ name: "", email: "", company: "", message: "" });
+                    setEnterpriseSent(false);
+                    setEnterpriseDialogOpen(true);
+                  }}
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  {plan.cta}
+                </Button>
+              ) : (
+                <Link to="/auth" className="w-full">
+                  <Button
+                    className="w-full"
+                    variant={plan.popular ? "default" : "outline"}
+                  >
+                    {plan.cta}
+                    <ArrowRight className="w-4 h-4 ml-1.5" />
+                  </Button>
+                </Link>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Footer note */}
         <div className="mt-12 text-center text-sm text-muted-foreground space-y-2">
-          <p>All plans include a 2-week free trial. Cancel anytime.</p>
-          <p>Questions? <a href="mailto:hello@personalized.page" className="text-primary hover:underline">Contact us</a></p>
+          <p>7-day free trial on all new accounts. No credit card required. Cancel anytime.</p>
+          <p>
+            Questions?{" "}
+            <a href="mailto:hello@personalized.page" className="text-primary hover:underline">
+              hello@personalized.page
+            </a>
+          </p>
         </div>
       </div>
 
-      {/* Enterprise Contact Dialog */}
+      {/* Footer */}
+      <footer className="border-t border-border py-8 mt-8">
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <Link to="/">
+            <BrandLogo className="h-6" />
+          </Link>
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Personalized Page. All rights reserved.
+          </p>
+        </div>
+      </footer>
+
+      {/* Enterprise Dialog */}
       <Dialog open={enterpriseDialogOpen} onOpenChange={setEnterpriseDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -248,29 +249,63 @@ const Pricing = () => {
               Tell us about your needs and we'll put together a custom plan.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Name</Label>
-                <Input value={enterpriseForm.name} onChange={(e) => setEnterpriseForm({ ...enterpriseForm, name: e.target.value })} placeholder="Your name" />
+
+          {enterpriseSent ? (
+            <div className="py-6 text-center space-y-2">
+              <p className="text-2xl">✅</p>
+              <p className="font-semibold text-foreground">Request sent!</p>
+              <p className="text-sm text-muted-foreground">We'll be in touch within 1 business day.</p>
+            </div>
+          ) : (
+            <div className="space-y-4 pt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Name</Label>
+                  <Input
+                    value={enterpriseForm.name}
+                    onChange={(e) => setEnterpriseForm({ ...enterpriseForm, name: e.target.value })}
+                    placeholder="Your name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Company</Label>
+                  <Input
+                    value={enterpriseForm.company}
+                    onChange={(e) => setEnterpriseForm({ ...enterpriseForm, company: e.target.value })}
+                    placeholder="Company name"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
-                <Label>Company</Label>
-                <Input value={enterpriseForm.company} onChange={(e) => setEnterpriseForm({ ...enterpriseForm, company: e.target.value })} placeholder="Company name" />
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={enterpriseForm.email}
+                  onChange={(e) => setEnterpriseForm({ ...enterpriseForm, email: e.target.value })}
+                  placeholder="you@company.com"
+                />
               </div>
+              <div className="space-y-2">
+                <Label>Tell us about your needs</Label>
+                <Textarea
+                  value={enterpriseForm.message}
+                  onChange={(e) => setEnterpriseForm({ ...enterpriseForm, message: e.target.value })}
+                  rows={4}
+                  placeholder="Expected volume, integrations, timeline..."
+                />
+              </div>
+              <Button
+                onClick={handleEnterpriseSubmit}
+                className="w-full"
+                disabled={sendingEnterprise || !enterpriseForm.name || !enterpriseForm.email || !enterpriseForm.company}
+              >
+                {sendingEnterprise
+                  ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</>
+                  : "Send Request"
+                }
+              </Button>
             </div>
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input type="email" value={enterpriseForm.email} onChange={(e) => setEnterpriseForm({ ...enterpriseForm, email: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label>Tell us about your needs</Label>
-              <Textarea value={enterpriseForm.message} onChange={(e) => setEnterpriseForm({ ...enterpriseForm, message: e.target.value })} rows={4} placeholder="Expected volume, integrations, timeline..." />
-            </div>
-            <Button onClick={handleEnterpriseSubmit} className="w-full" disabled={sendingEnterprise}>
-              {sendingEnterprise ? "Sending..." : "Send Request"}
-            </Button>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
