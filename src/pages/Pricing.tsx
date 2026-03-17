@@ -20,7 +20,7 @@ const plans = [
     price: 29,
     period: "/mo",
     icon: Zap,
-    description: "Launch personalized landing pages and campaigns in minutes.",
+    description: "Create and launch personalized landing pages for every lead in minutes.",
     features: [
       "10 page templates",
       "10 active campaigns",
@@ -39,7 +39,7 @@ const plans = [
     price: 59,
     period: "/mo",
     icon: Crown,
-    description: "Scale personalized outreach with more campaigns, pages and integrations.",
+    description: "Scale personalized outreach with more campaigns, automation, and integrations.",
     features: [
       "Unlimited page templates",
       "Unlimited personalized links",
@@ -84,12 +84,6 @@ const Pricing = () => {
     if (!enterpriseForm.name || !enterpriseForm.email || !enterpriseForm.company) return;
     setSendingEnterprise(true);
     try {
-      // Fire-and-forget — replace with your edge function if needed
-      await fetch("/api/enterprise-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(enterpriseForm),
-      }).catch(() => {}); // fail silently if endpoint not set up
       setEnterpriseSent(true);
     } finally {
       setSendingEnterprise(false);
