@@ -284,6 +284,10 @@ const Admin = () => {
 
   // Check authentication and admin role
   useEffect(() => {
+    const isProtectedRoute = () =>
+      window.location.pathname.startsWith("/workspace") ||
+      window.location.pathname.startsWith("/admin");
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
@@ -291,7 +295,7 @@ const Admin = () => {
         
         if (!session?.user) {
           setCheckingAuth(false);
-          navigate("/auth");
+          if (isProtectedRoute()) navigate("/auth");
           return;
         }
         
@@ -308,7 +312,7 @@ const Admin = () => {
       
       if (!session?.user) {
         setCheckingAuth(false);
-        navigate("/auth");
+        if (isProtectedRoute()) navigate("/auth");
         return;
       }
       
