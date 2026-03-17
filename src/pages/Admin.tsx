@@ -242,9 +242,9 @@ const Admin = () => {
   const [showContactMethods, setShowContactMethods] = useState(false);
   const [addContactsSheetOpen, setAddContactsSheetOpen] = useState(false);
 
-  // Custom domain
-  const [customDomain, setCustomDomain] = useState("");
-  const [customDomainDraft, setCustomDomainDraft] = useState("");
+  // Subdomain (yourname.personalized.page)
+  const [customDomain, setCustomDomain] = useState("");       // full saved domain e.g. "acmecorp.personalized.page"
+  const [subdomainDraft, setSubdomainDraft] = useState("");   // just the prefix e.g. "acmecorp"
   const [savingDomain, setSavingDomain] = useState(false);
 
   // Delete campaign confirmation
@@ -385,24 +385,83 @@ const Admin = () => {
       .single();
     if (data?.custom_domain) {
       setCustomDomain(data.custom_domain);
-      setCustomDomainDraft(data.custom_domain);
+      // Parse "acmecorp.personalized.page" back to just "acmecorp"
+      const prefix = data.custom_domain.replace(".personalized.page", "");
+      setSubdomainDraft(prefix);
     }
   };
 
   const saveCustomDomain = async () => {
     if (!user) return;
+
+    // Pro guard
+    if (usageLimits.plan !== "pro") {
+      toast({ title: "Pro plan required", description: "Upgrade to Pro to set up your subdomain.", variant: "destructive" });
+      return;
+    }
+
+    const prefix = subdomainDraft.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+
+    if (!prefix) {
+      toast({ title: "Subdomain required", description: "Enter a name for your subdomain.", variant: "destructive" });
+      return;
+    }
+    if (prefix.length < 2) {
+      toast({ title: "Too short", description: "Subdomain must be at least 2 characters.", variant: "destructive" });
+      return;
+    }
+
+    const fullDomain = `${prefix}.personalized.page`;
+
     setSavingDomain(true);
     try {
-      const domain = customDomainDraft.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+      // Check if subdomain is already taken by another user
+      const { data: existing } = await supabase
+        .from("profiles")
+        .select("user_id")
+        .eq("custom_domain", fullDomain)
+        .neq("user_id", user.id)
+        .maybeSingle();
+
+      if (existing) {
+        toast({ title: "Subdomain taken", description: `${fullDomain} is already in use. Please choose a different name.`, variant: "destructive" });
+        return;
+      }
+
       const { error } = await supabase
         .from("profiles")
-        .update({ custom_domain: domain || null })
+        .update({ custom_domain: fullDomain })
         .eq("user_id", user.id);
       if (error) throw error;
-      setCustomDomain(domain);
-      toast({ title: domain ? "Custom domain saved" : "Custom domain removed" });
+
+      setCustomDomain(fullDomain);
+      setSubdomainDraft(prefix);
+
+      toast({
+        title: "Subdomain active!",
+        description: `Your pages are now live at ${fullDomain}`,
+      });
     } catch (err: any) {
       toast({ title: "Error saving domain", description: err.message, variant: "destructive" });
+    } finally {
+      setSavingDomain(false);
+    }
+  };
+
+  const removeCustomDomain = async () => {
+    if (!user) return;
+    setSavingDomain(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ custom_domain: null })
+        .eq("user_id", user.id);
+      if (error) throw error;
+      setCustomDomain("");
+      setSubdomainDraft("");
+      toast({ title: "Subdomain removed" });
+    } catch (err: any) {
+      toast({ title: "Error removing domain", description: err.message, variant: "destructive" });
     } finally {
       setSavingDomain(false);
     }
@@ -938,7 +997,7 @@ const Admin = () => {
 
       if (error) throw error;
 
-      const pageUrl = `${window.location.origin}/view/${data.token}`;
+      const pageUrl = customDomain ? `https://${customDomain}/view/${data.token}` : `${window.location.origin}/view/${data.token}`;
       
       toast({
         title: "Page created!",
@@ -1001,6 +1060,9 @@ const Admin = () => {
   };
 
   const getPageUrl = (token: string) => {
+    if (customDomain) {
+      return `https://${customDomain}/view/${token}`;
+    }
     return `${window.location.origin}/view/${token}`;
   };
 
@@ -2746,8 +2808,8 @@ const Admin = () => {
                     <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-3">Current Plan</p>
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-2xl font-semibold tracking-tight text-slate-900 capitalize">{usageLimits.plan || "Trial"}</span>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${usageLimits.plan === "pro" ? "bg-violet-100 text-violet-700" : usageLimits.plan === "starter" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
-                        {usageLimits.plan === "pro" ? "Pro" : usageLimits.plan === "starter" ? "Starter" : "Trial"}
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${usageLimits.plan === "pro" ? "bg-violet-100 text-violet-700" : usageLimits.plan === "solo" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
+                        {usageLimits.plan === "pro" ? "Pro" : usageLimits.plan === "solo" ? "Solo" : "Trial"}
                       </span>
                     </div>
                     <p className="text-sm text-slate-500">{user?.email}</p>
@@ -2799,78 +2861,103 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Custom Domain & Integrations — Side-by-side */}
+              {/* Subdomain & Integrations — Side-by-side */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                {/* Custom Domain */}
+                {/* Subdomain */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Globe className="w-4 h-4 text-slate-400" />
-                    <h3 className="text-sm font-semibold tracking-tight text-slate-900">Custom Domain</h3>
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-slate-400" />
+                      <h3 className="text-sm font-semibold tracking-tight text-slate-900">Your Subdomain</h3>
+                    </div>
+                    {usageLimits.plan !== "pro" && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-violet-100 text-violet-700">
+                        Pro only
+                      </span>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          id="custom-domain"
-                          placeholder="pages.yourdomain.com"
-                          value={customDomainDraft}
-                          onChange={(e) => setCustomDomainDraft(e.target.value)}
-                          className="bg-slate-50 focus:bg-white border-slate-200 text-sm"
-                        />
+                  {usageLimits.plan === "pro" ? (
+                    <>
+                      {/* Active domain badge */}
+                      {customDomain && (
+                        <div className="flex items-center justify-between px-3 py-2 bg-green-50 rounded-lg border border-green-100">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                            <a
+                              href={`https://${customDomain}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-slate-700 font-medium hover:text-primary transition-colors"
+                            >
+                              {customDomain}
+                            </a>
+                          </div>
+                          <button
+                            onClick={removeCustomDomain}
+                            className="text-slate-400 hover:text-red-500 transition-colors"
+                            title="Remove domain"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Subdomain input */}
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium text-slate-500">Choose your subdomain</p>
+                        <div className="flex items-center gap-1.5">
+                          <Input
+                            placeholder="acmecorp"
+                            value={subdomainDraft}
+                            onChange={(e) => setSubdomainDraft(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                            className="bg-slate-50 focus:bg-white border-slate-200 text-sm flex-1"
+                          />
+                          <span className="text-slate-400 text-sm shrink-0">.personalized.page</span>
+                          <Button
+                            size="sm"
+                            onClick={saveCustomDomain}
+                            disabled={savingDomain || !subdomainDraft || `${subdomainDraft}.personalized.page` === customDomain}
+                            className="bg-primary hover:bg-primary/90 shrink-0"
+                          >
+                            {savingDomain ? "Saving..." : customDomain ? "Update" : "Activate"}
+                          </Button>
+                        </div>
+                        {subdomainDraft && `${subdomainDraft}.personalized.page` !== customDomain && (
+                          <p className="text-xs text-slate-400">
+                            Your pages will be live at{" "}
+                            <span className="font-mono text-slate-600">{subdomainDraft}.personalized.page</span>
+                          </p>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-slate-400">
+                        Your subdomain is active instantly — no DNS setup required.
+                        Share links like <span className="font-mono">{subdomainDraft || "yourname"}.personalized.page/view/...</span>
+                      </p>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-6 text-center space-y-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+                        <Globe className="w-5 h-5 text-slate-400" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-slate-700">Subdomains are a Pro feature</p>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Get your own <span className="font-mono">name.personalized.page</span> subdomain.<br />Upgrade to Pro to unlock.
+                        </p>
                       </div>
                       <Button
                         size="sm"
-                        onClick={saveCustomDomain}
-                        disabled={savingDomain || customDomainDraft.trim().replace(/^https?:\/\//, "").replace(/\/+$/, "") === customDomain}
-                        className="bg-primary hover:bg-primary/90"
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => navigate("/pricing")}
                       >
-                        {savingDomain ? "Saving..." : "Save"}
+                        Upgrade to Pro
                       </Button>
                     </div>
-                  </div>
-
-                  {customDomain && (
-                    <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-100">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                      <span className="text-sm text-slate-700 font-medium">{customDomain}</span>
-                    </div>
                   )}
-
-                  {/* DNS Code Snippet */}
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-slate-500">DNS Configuration</p>
-                    <div className="bg-slate-900 rounded-lg p-3 space-y-2 font-mono text-xs">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-slate-400">Host  </span>
-                          <span className="text-green-400">{customDomainDraft || "pages.yourdomain.com"}</span>
-                        </div>
-                        <button
-                          onClick={() => copyToClipboard(customDomainDraft || "pages.yourdomain.com")}
-                          className="text-slate-400 hover:text-white transition-colors p-1"
-                          title="Copy"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-slate-400">CNAME </span>
-                          <span className="text-green-400">personalized.page</span>
-                        </div>
-                        <button
-                          onClick={() => copyToClipboard("personalized.page")}
-                          className="text-slate-400 hover:text-white transition-colors p-1"
-                          title="Copy"
-                        >
-                          <Copy className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                    <p className="text-[11px] text-slate-400">DNS changes can take up to 24 hours to propagate.</p>
-                  </div>
                 </div>
 
                 {/* Integrations */}
