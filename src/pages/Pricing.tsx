@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import BrandLogo from "@/components/BrandLogo";
@@ -18,20 +19,21 @@ import { Textarea } from "@/components/ui/textarea";
 const plans = [
   {
     id: "starter",
-    name: "Starter",
+    name: "Solo",
     price: 29,
     period: "/mo",
     icon: Zap,
     description: "For individuals getting started with personalized outreach.",
     features: [
-      "Up to 25 personalized pages",
-      "Up to 50 campaigns",
-      "All templates & builder access",
+      "10 page templates",
+      "10 active campaigns",
+      "Up to 100 personalized links per campaign",
       "CSV & Google Sheet import",
+      "Mailchimp integration",
       "Page view analytics",
       "Email support",
     ],
-    cta: "Upgrade to Starter",
+    cta: "Upgrade to Solo",
     popular: false,
   },
   {
@@ -42,12 +44,13 @@ const plans = [
     icon: Crown,
     description: "For teams scaling personalized campaigns without limits.",
     features: [
-      "Unlimited personalized pages",
-      "Unlimited campaigns",
-      "All templates & builder access",
+      "Unlimited page templates",
+      "Unlimited personalized links",
+      "50 active campaigns",
       "CSV & Google Sheet import",
-      "Page view analytics",
+      "Mailchimp integration",
       "Snov.io integration",
+      "Zapier integration",
       "Priority support",
     ],
     cta: "Upgrade to Pro",
@@ -91,32 +94,49 @@ const Pricing = () => {
 
     setCheckingOut(planId);
 
-    // TODO: Replace with actual Stripe checkout
-    // const { data, error } = await supabase.functions.invoke("create-checkout", {
-    //   body: { planId, returnUrl: window.location.origin + "/billing" },
-    // });
-    // if (data?.url) window.location.href = data.url;
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: {
+          planId,
+          successUrl: `${window.location.origin}/billing?checkout=success`,
+          cancelUrl: `${window.location.origin}/pricing`,
+        },
+      });
 
-    setTimeout(() => {
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
+    } catch (err: any) {
       toast({
-        title: "Stripe not connected yet",
-        description: "Checkout will be available once Stripe is integrated.",
+        title: "Checkout failed",
+        description: err.message || "Unable to start checkout. Please try again.",
+        variant: "destructive",
       });
       setCheckingOut(null);
-    }, 1500);
+    }
   };
 
   const handleEnterpriseSubmit = async () => {
     setSendingEnterprise(true);
-    // TODO: Send enterprise inquiry email via edge function
-    setTimeout(() => {
+    try {
+      await supabase.functions.invoke("send-enterprise-inquiry", {
+        body: enterpriseForm,
+      });
       toast({ title: "Request sent!", description: "We'll be in touch within 1 business day." });
-      setSendingEnterprise(false);
       setEnterpriseDialogOpen(false);
-    }, 1000);
+    } catch {
+      toast({ title: "Something went wrong", description: "Please try again or email us directly.", variant: "destructive" });
+    } finally {
+      setSendingEnterprise(false);
+    }
   };
 
   const currentPlan = profile?.plan || "trial";
+
+  // 7-day trial
   const trialDaysLeft = profile?.trial_ends_at
     ? Math.max(0, Math.ceil((new Date(profile.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : 0;
@@ -145,12 +165,12 @@ const Pricing = () => {
         {currentPlan === "trial" && (
           <div className="mb-8 rounded-lg border border-primary/30 bg-primary/5 p-4 text-center">
             <p className="text-sm text-foreground">
-              You're on a <strong>free trial</strong> —{" "}
+              You're on a <strong>7-day free trial</strong> —{" "}
               {trialDaysLeft > 0
                 ? <>{trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} remaining</>
                 : <span className="text-destructive font-semibold">trial expired</span>
-              }.
-              Upgrade to keep your pages live.
+              }.{" "}
+              Upgrade to keep your pages live and unlock more capacity.
             </p>
           </div>
         )}
@@ -158,8 +178,24 @@ const Pricing = () => {
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold text-foreground mb-2">Choose Your Plan</h1>
           <p className="text-muted-foreground max-w-lg mx-auto">
-            Scale your personalized outreach. All plans include full access to templates, the page builder, and analytics.
+            Scale your personalized outreach. All paid plans include full access to templates, the page builder, and analytics.
           </p>
+        </div>
+
+        {/* Trial plan callout */}
+        <div className="mb-8 rounded-xl border border-border bg-card p-5 flex items-start gap-4">
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
+            <span className="text-lg">🎁</span>
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-sm">Free Trial — 7 days</p>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              1 page template · Up to 100 personalized landing pages · No credit card required
+            </p>
+          </div>
+          {currentPlan === "trial" && (
+            <Badge variant="secondary" className="ml-auto shrink-0">Current</Badge>
+          )}
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -212,13 +248,13 @@ const Pricing = () => {
                   </Button>
                 ) : (
                   <Button
-                    className={`w-full ${plan.popular ? "" : ""}`}
+                    className="w-full"
                     variant={plan.popular ? "default" : "outline"}
                     onClick={() => handleUpgrade(plan.id)}
-                    disabled={checkingOut === plan.id}
+                    disabled={!!checkingOut}
                   >
                     {checkingOut === plan.id ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Processing...</>
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Redirecting to checkout...</>
                     ) : plan.id === "enterprise" ? (
                       <><MessageSquare className="w-4 h-4 mr-2" />{plan.cta}</>
                     ) : (
@@ -231,9 +267,8 @@ const Pricing = () => {
           })}
         </div>
 
-        {/* FAQ / Info */}
         <div className="mt-12 text-center text-sm text-muted-foreground space-y-2">
-          <p>All plans include a 2-week free trial. Cancel anytime.</p>
+          <p>7-day free trial on all new accounts. Cancel anytime.</p>
           <p>Questions? <a href="mailto:hello@personalized.page" className="text-primary hover:underline">Contact us</a></p>
         </div>
       </div>
@@ -267,7 +302,7 @@ const Pricing = () => {
               <Textarea value={enterpriseForm.message} onChange={(e) => setEnterpriseForm({ ...enterpriseForm, message: e.target.value })} rows={4} placeholder="Expected volume, integrations, timeline..." />
             </div>
             <Button onClick={handleEnterpriseSubmit} className="w-full" disabled={sendingEnterprise}>
-              {sendingEnterprise ? "Sending..." : "Send Request"}
+              {sendingEnterprise ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Sending...</> : "Send Request"}
             </Button>
           </div>
         </DialogContent>
