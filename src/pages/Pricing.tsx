@@ -20,7 +20,7 @@ const plans = [
     price: 29,
     period: "/mo",
     icon: Zap,
-    description: "For individuals getting started with personalized outreach.",
+    description: "Launch personalized landing pages and campaigns in minutes.",
     features: [
       "10 page templates",
       "10 active campaigns",
@@ -39,7 +39,7 @@ const plans = [
     price: 59,
     period: "/mo",
     icon: Crown,
-    description: "For teams scaling personalized campaigns without limits.",
+    description: "Scale personalized outreach with more campaigns, pages and integrations.",
     features: [
       "Unlimited page templates",
       "Unlimited personalized links",
